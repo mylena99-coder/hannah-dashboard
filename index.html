@@ -102,8 +102,7 @@ h1,h2,h3{font-family:var(--font-display);font-weight:400;margin:0;text-wrap:bala
 .wx .lb{font-size:13px;color:var(--ink-soft);display:block}
 .wx .big{font-family:var(--font-display);font-size:28px;line-height:1.15;display:block;font-variant-numeric:tabular-nums}
 .wx .sm{font-size:14px;display:block;font-variant-numeric:tabular-nums}
-.wear{margin:10px 0 0;border:2px dashed var(--star);border-radius:14px;padding:8px 12px;font-size:15px}
-.wear b{font-family:var(--font-display);font-weight:400;color:var(--accent)}
+#jpStreak{font-family:var(--font-display);font-size:16px;color:var(--accent)}
 .card{background:var(--card);border-radius:var(--r);padding:18px;min-width:0}
 .card h2{font-size:21px;margin-bottom:10px}
 .shelf{display:flex;flex-direction:column;gap:18px;min-width:0}
@@ -282,7 +281,12 @@ dialog::backdrop{background:rgba(10,10,40,.55)}
       <section class="card" id="wxCard" hidden>
         <div class="wx-top"><h2>날씨</h2><small id="wxAt"></small></div>
         <div class="wx" id="wx"></div>
-        <p class="wear" id="wear"></p>
+      </section>
+      <section class="card">
+        <div class="wx-top"><h2>줄넘기 챌린지</h2><small id="jpStreak"></small></div>
+        <button class="task" type="button" id="jpBtn" aria-pressed="false"><span class="em" aria-hidden="true">🤸</span><span class="tx" id="jpTx"></span><span class="ck" aria-hidden="true">★</span></button>
+        <div class="week" id="jpWeek" style="margin-top:10px"></div>
+        <p class="legend">하루에 한 번 하고 누르면 별 2개를 받아요.</p>
       </section>
       <section class="card"><h2>이번 주</h2><div class="week" id="week"></div>
         <p class="legend">점 세 개는 아침 · 학교 다녀와서 · 자기 전이에요. 다 하면 노랗게 켜져요.</p></section>
@@ -404,7 +408,7 @@ var BANK_KO=[
 ["\"국물\"을 소리 나는 대로 쓰면 무엇일까요?","[궁물]","[국물]","[구물]","[굼물]"],
 ["꾸며 주는 말이 들어간 문장은 무엇일까요?","예쁜 꽃이 피었다.","꽃이 피었다.","꽃을 보았다.","꽃이다."]];
 function defaults(){return {v:2,
-  cfg:{name:"해나",city:"서울",note:"오늘도 네가 제일 반짝여. 사랑해!",unlockEvery:15,
+  cfg:{name:"해나",city:"서울",note:"오늘도 네가 제일 반짝여. 사랑해!",unlockEvery:15,jumpGoal:100,
     hw:[{id:uid(),e:"🔢",t:"수학 연산 문제집 2쪽",n:3},{id:uid(),e:"📗",t:"영어 원서 읽기",n:5},{id:uid(),e:"✍️",t:"받아쓰기 연습",n:1},{id:uid(),e:"📓",t:"일기 쓰기",n:2},{id:uid(),e:"📝",t:"독서록 쓰기",n:1}],
     tasks:{
       morning:[T("🛏️","이불 정리하기"),T("🪥","세수하고 양치하기"),T("👕","옷 갈아입기"),T("🍚","아침밥 먹기"),T("🎒","가방 챙겨서 나가기")],
@@ -424,6 +428,7 @@ function normalize(s){
     d.weeks[k]={c:x.c&&typeof x.c==="object"?x.c:{},stars:+x.stars||0,full:!!x.full};
   });
   d.cfg.note=typeof c.note==="string"?c.note:d.cfg.note;
+  d.cfg.jumpGoal=Math.min(5000,Math.max(10,Math.round(+c.jumpGoal)||100));
   d.cfg.city=typeof c.city==="string"&&c.city?c.city:"서울";
   d.cfg.unlockEvery=[10,15,20,30].indexOf(c.unlockEvery)>=0?c.unlockEvery:15;
   if(c.tasks&&typeof c.tasks==="object") ROUTINES.forEach(function(r){
@@ -434,6 +439,7 @@ function normalize(s){
     var x=s.days[k]; if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||!x) return;
     var q={}; if(x.q&&typeof x.q==="object") SUBJ.forEach(function(sb){ if(x.q[sb.k]!=null) q[sb.k]=+x.q[sb.k]||0 });
     d.days[k]={done:x.done&&typeof x.done==="object"?x.done:{},stars:+x.stars||0,r:Array.isArray(x.r)?x.r.map(Boolean):[false,false,false],q:q};
+    if(+x.j>0) d.days[k].j=Math.min(99999,Math.round(+x.j));
   });
   d.banked=+s.banked||0; d.bonus=+s.bonus||0; d.spent=+s.spent||0;
   if(Array.isArray(s.red)) d.red=s.red.filter(function(x){return x&&x.id}).map(function(x){return {id:String(x.id),t:String(x.t||""),e:String(x.e||"🎁"),c:+x.c||0,d:String(x.d||""),st:x.st==="done"?"done":"wait"}});
@@ -464,6 +470,7 @@ function recompute(k){
     s+=n; var full=ts.length>0&&n===ts.length; if(full) s+=2; r.push(full);});
   if(r[0]&&r[1]&&r[2]) s+=3;
   if(d.q) Object.keys(d.q).forEach(function(q){s+=+d.q[q]||0});
+  if(+d.j>0) s+=2;
   d.stars=s; d.r=r;
 }
 function earned(){var s=state.banked+state.bonus; Object.keys(state.days).forEach(function(k){s+=state.days[k].stars||0});
@@ -571,6 +578,29 @@ function setHw(item,i){
   w.c[item.id]=nx; recomputeWeek(k); prune();
   if(nx>cur) cheerUp(fBefore,w.full&&!wasFull?"이번 주 숙제를 전부 했어요! 별 5개 더":null,true);
   save(); render();
+}
+
+/* ---------- jump rope: one check a day ---------- */
+function toggleJump(){
+  var d=ensureDay(today()),on=!(+d.j>0),fBefore=friendCount();
+  if(on) d.j=1; else delete d.j;
+  recompute(today()); prune();
+  if(on) cheerUp(fBefore,"줄넘기 미션 성공! 별 2개를 받았어요",false);
+  save(); render();
+}
+function jumpStreak(){
+  var d=new Date(),n=0; function ok(k){return state.days[k]&&+state.days[k].j>0}
+  if(!ok(keyOf(d))) d.setDate(d.getDate()-1);
+  while(ok(keyOf(d))){n++; d.setDate(d.getDate()-1)} return n;
+}
+function renderJump(){
+  var on=+dayRec(today()).j>0,st=jumpStreak(),now=new Date(),mon=new Date(now),out=[],i; mon.setDate(now.getDate()-((now.getDay()+6)%7));
+  $("jpBtn").setAttribute("aria-pressed",String(on)); $("jpTx").textContent=on?"오늘 줄넘기 미션 성공!":"오늘 줄넘기 했어요";
+  $("jpStreak").textContent=st?st+"일 연속":"";
+  for(i=0;i<7;i++){var dt=new Date(mon); dt.setDate(mon.getDate()+i); var k=keyOf(dt),hit=+dayRec(k).j>0;
+    out.push(h("div",{"class":"day"+(k===today()?" today":"")},h("b",{text:DAYS_KO[dt.getDay()]}),
+      h("div",{"class":"dots","aria-label":hit?"했어요":"아직"},h("i",{"class":hit?"on":""}))))}
+  fill($("jpWeek"),out);
 }
 
 /* ---------- quiz ---------- */
@@ -694,7 +724,7 @@ function render(popId){
   }):[h("li",null,h("p",{"class":"empty",text:"아직 할 일이 없어요. 부모님 메뉴에서 넣어 주세요."}))]);
   var cheer=$("cheer"); cheer.hidden=!(ts.length&&done===ts.length); cheer.textContent="전부 해냈어요! 정말 멋져요.";
 
-  renderWeather(); renderWeek(); renderFriends(); renderShop(); renderNav(); renderHw(); renderQuiz();
+  renderWeather(); renderWeek(); renderFriends(); renderShop(); renderNav(); renderHw(); renderJump(); renderQuiz();
 }
 var weather=null;
 try{var wraw=localStorage.getItem(LS+"-wx"); if(wraw) weather=JSON.parse(wraw)}catch(e){}
@@ -723,8 +753,6 @@ function renderWeather(){
   if(t) tiles.push(tile("오늘",t));
   if(m) tiles.push(tile("내일",m));
   fill($("wx"),tiles);
-  var useToday=phase()==="morning"&&t, d=useToday?t:(m||t), wear=$("wear");
-  fill(wear,[h("b",{text:(d===t?"오늘":"내일 아침")+" 옷 "}),wearFor(am(d),d.hi)+((d.rainAm!=null?d.rainAm:d.rain)>=50?". 우산도 챙겨요":"")+"."]);
 }
 var view="today";
 function renderNav(){
@@ -781,6 +809,7 @@ $("openParent").addEventListener("click",function(){
   var a=3+Math.floor(Math.random()*7),b=6+Math.floor(Math.random()*4); gateA=a*b;
   $("gateQ").textContent=a+" × "+b+" 는 얼마일까요?"; $("gateAns").value=""; $("gate").showModal(); $("gateAns").focus();
 });
+$("jpBtn").addEventListener("click",toggleJump);
 $("gateClose").addEventListener("click",function(){$("gate").close()});
 $("gateForm").addEventListener("submit",function(ev){
   ev.preventDefault();
