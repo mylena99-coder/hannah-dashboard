@@ -214,6 +214,66 @@ h1,h2,h3{font-family:var(--font-display);font-weight:400;margin:0;text-wrap:bala
 .result p{margin:6px 0 16px}
 .result .row{justify-content:center}
 
+.pv{font-family:var(--font-display);font-size:22px;line-height:1.35;margin:0 0 10px;text-wrap:balance}
+.pv-en{margin:8px 0 0;border:2px dashed var(--star);border-radius:14px;padding:8px 12px}
+.pv-en small{display:block;font-size:13px;color:var(--ink-soft)}
+.pv-en span{font-family:var(--font-display);font-size:19px}
+.pv-mean{margin:0;background:var(--card-2);border-radius:14px;padding:10px 12px}
+
+.solo.wide{max-width:1000px}
+:root{--wood:#C89B6A}
+:root[data-phase="night"]{--wood:#8A6A4A}
+/* bookshelf */
+.shelf-wall{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 5px;padding:0 12px;min-height:174px;margin:6px 0 12px;border-radius:14px;
+  background-image:repeating-linear-gradient(180deg,transparent 0,transparent 160px,var(--wood) 160px,var(--wood) 170px,transparent 170px,transparent 174px)}
+.slot{height:160px;display:flex;align-items:flex-end;flex:none}
+.spine{writing-mode:vertical-rl;border-radius:6px 6px 2px 2px;color:#fff;font-family:var(--font-display);font-size:15px;padding:10px 0;
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:pointer;box-shadow:inset -5px 0 0 rgba(0,0,0,.14);text-align:start}
+.spine.en{border-top:9px solid rgba(255,255,255,.6)}
+.spine.sel{outline:3px solid var(--ink);outline-offset:1px}
+.slot.deco{font-size:34px;line-height:1;padding:0 4px 2px}
+.shelf-empty{align-self:center;margin:0 auto;color:var(--ink-soft)}
+#bkInfo{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+/* badges */
+.bds{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px}
+.bd{background:var(--card-2);border-radius:18px;padding:12px 8px;text-align:center;min-width:0}
+.bd .e{font-size:36px;line-height:1.2;display:block}
+.bd .n{font-family:var(--font-display);font-size:17px;display:block}
+.bd .d{font-size:13px;color:var(--ink-soft);display:block}
+.bd.lock .e{filter:grayscale(1);opacity:.35}
+.bd.got{box-shadow:inset 0 0 0 3px var(--star)}
+/* weekday chips in the parent menu */
+.row.chips{gap:4px;margin:-2px 0 12px}
+.dchip{width:36px;height:36px;border-radius:50%;border:2px solid var(--line);background:transparent;font-size:14px;padding:0;color:var(--ink-soft)}
+.dchip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.review p{margin:0 0 6px;font-size:15px}
+
+.pup-wrap{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:860px){.pup-wrap{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}}
+.pup-scene svg{display:block;border-radius:18px}
+.bubble{position:relative;margin:0 0 12px;background:var(--card-2);border-radius:18px;padding:10px 16px;font-family:var(--font-display);font-size:18px;min-height:48px}
+.bubble::after{content:"";position:absolute;left:46%;bottom:-9px;border:10px solid transparent;border-top-color:var(--card-2);border-bottom:0}
+.pup-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.pup-tabs button{border:2px solid var(--line);background:var(--card-2);border-radius:99px;padding:8px 16px;font-family:var(--font-display);font-size:16px;min-height:44px}
+.pup-tabs button[aria-selected="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.coats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.coats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.coat{border:3px solid var(--line);background:#FFF1DC;border-radius:18px;padding:8px 4px 6px;color:#2A2850}
+.coat span{font-family:var(--font-display);font-size:16px;display:block}
+.coat[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)}
+.tail{transform-box:fill-box;transform-origin:0% 100%;animation:wag .45s ease-in-out infinite alternate}
+@keyframes wag{from{transform:rotate(-8deg)}to{transform:rotate(14deg)}}
+.dog-anim{transform-box:fill-box;transform-origin:50% 100%}
+.a-jump{animation:pjump .7s ease-out}
+.a-spin{animation:pspin .8s ease-in-out}
+.a-sit{animation:psit 1.1s ease-in-out}
+.a-dance{animation:pdance .9s ease-in-out}
+@keyframes pjump{0%,100%{transform:translateY(0)}35%{transform:translateY(-34px)}60%{transform:translateY(0)}75%{transform:translateY(-12px)}}
+@keyframes pspin{to{transform:rotate(360deg)}}
+@keyframes psit{0%,100%{transform:scaleY(1)}30%,70%{transform:scaleY(.8)}}
+@keyframes pdance{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-9deg)}40%,80%{transform:rotate(9deg)}}
+.a-spin{transform-origin:50% 55%}
+
 /* toast + fx */
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
 #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:50;
@@ -264,6 +324,26 @@ dialog::backdrop{background:rgba(10,10,40,.55)}
     <p class="rule">동그라미 하나에 별 1개 · 이번 주 숙제를 전부 하면 별 5개 더 · 월요일마다 새로 시작해요</p>
   </section>
 
+  <section class="card solo wide" id="viewBooks" hidden>
+    <div class="wx-top"><h2 id="bkHead">책장</h2><small id="bkCount"></small></div>
+    <form class="row" id="bkForm">
+      <label for="bkTitle">다 읽은 책 제목을 적어요</label>
+      <input class="in t" id="bkTitle" maxlength="60" autocomplete="off">
+      <select class="in" id="bkKind" aria-label="책 종류"><option value="ko">한글 책</option><option value="en">영어 책</option></select>
+      <button class="btn" type="submit">책장에 꽂기</button>
+    </form>
+    <div id="bkInfo" class="pv-mean" hidden></div>
+    <div class="shelf-wall" id="bkShelf"></div>
+    <p class="rule">책 한 권에 별 2개 (하루 두 권까지) · 다섯 권마다 책장에 화분이 놓여요 · 책을 누르면 제목과 읽은 날이 보여요</p>
+  </section>
+
+  <section class="card solo wide" id="viewBadges" hidden>
+    <div class="wx-top"><h2>도전 배지</h2><small id="bdCount"></small></div>
+    <div class="bds" id="bds"></div>
+  </section>
+
+  <section class="card solo wide" id="viewPup" hidden><div id="pupBody"></div></section>
+
   <section class="card solo" id="viewQuiz" hidden>
     <div id="quizBody"></div>
   </section>
@@ -292,6 +372,12 @@ dialog::backdrop{background:rgba(10,10,40,.55)}
         <p class="legend">점 세 개는 아침 · 학교 다녀와서 · 자기 전이에요. 다 하면 노랗게 켜져요.</p></section>
     </div>
     <div class="shelf b">
+      <section class="card"><h2>오늘의 속담</h2>
+        <p class="pv" id="pvText"></p>
+        <p class="pv-mean" id="pvMean" hidden></p>
+        <p class="pv-en" id="pvEn" hidden><small>영어로는 이렇게 말해요</small><span id="pvEnText" lang="en"></span></p>
+        <button class="btn" type="button" id="pvBtn">뜻이랑 영어 표현 보기</button>
+      </section>
       <section class="card"><h2>별 친구들</h2><p class="sub" id="frSub"></p>
         <div class="bar" aria-hidden="true"><i id="frFill" style="width:0"></i></div>
         <div class="friends" id="friends"></div></section>
@@ -322,7 +408,11 @@ var FRIENDS=[["🐰","토토"],["🐥","삐약이"],["🐱","나비"],["🐶","�
 var DAYS_KO=["일","월","화","수","목","금","토"];
 
 function uid(){return Math.random().toString(36).slice(2,9)}
-function T(e,t){return {id:uid(),e:e,t:t}}
+function T(e,t,w){var x={id:uid(),e:e,t:t}; if(w) x.w=w; return x}
+function normTask(t){var x={id:String(t.id),e:String(t.e||"⭐"),t:String(t.t||"")};
+  if(Array.isArray(t.w)){var w=t.w.map(Number).filter(function(n,i,a){return n>=0&&n<=6&&n===Math.floor(n)&&a.indexOf(n)===i}).sort(); if(w.length&&w.length<7) x.w=w}
+  return x}
+function frag(f,n){f.appendChild(n); return f}
 var SUBJ=[{k:"en",nm:"영어",e:"🔤"},{k:"ko",nm:"국어",e:"📚"},{k:"ma",nm:"수학",e:"🔢"}];
 /* quiz banks: [question, correct answer, wrong, wrong, wrong] */
 var BANK_EN=[
@@ -407,16 +497,42 @@ var BANK_KO=[
 ["\"같이\"를 소리 나는 대로 쓰면 무엇일까요?","[가치]","[가티]","[갇이]","[가시]"],
 ["\"국물\"을 소리 나는 대로 쓰면 무엇일까요?","[궁물]","[국물]","[구물]","[굼물]"],
 ["꾸며 주는 말이 들어간 문장은 무엇일까요?","예쁜 꽃이 피었다.","꽃이 피었다.","꽃을 보았다.","꽃이다."]];
+var PROVERBS=[["가는 말이 고와야 오는 말이 곱다","내가 먼저 고운 말을 해야 다른 사람도 나에게 고운 말을 해요."],["티끌 모아 태산","아주 작은 것도 꾸준히 모으면 큰 것이 돼요."],["원숭이도 나무에서 떨어진다","아무리 잘하는 사람도 실수할 때가 있어요."],["소 잃고 외양간 고친다","일이 잘못된 뒤에 뒤늦게 손을 써도 소용이 없어요. 미리 준비해야 해요."],["백지장도 맞들면 낫다","쉬운 일도 함께 하면 훨씬 수월해요."],["천 리 길도 한 걸음부터","아무리 큰일도 작은 시작부터 차근차근 해야 해요."],["세 살 버릇 여든까지 간다","어릴 때 든 버릇은 나이가 들어도 고치기 어려워요."],["낮말은 새가 듣고 밤말은 쥐가 듣는다","아무도 안 듣는 것 같아도 말은 퍼지기 쉬우니 늘 조심해야 해요."],["고래 싸움에 새우 등 터진다","힘센 사람들이 싸우는 사이에서 약한 사람이 피해를 봐요."],["발 없는 말이 천 리 간다","말은 순식간에 멀리 퍼지니 조심해서 해야 해요."],["돌다리도 두들겨 보고 건너라","잘 아는 일이라도 한 번 더 확인하고 조심해요."],["호랑이도 제 말 하면 온다","누군가의 이야기를 하고 있는데 마침 그 사람이 나타나요."],["우물 안 개구리","넓은 세상을 모르고 자기가 아는 것이 전부라고 생각하는 사람이에요."],["누워서 떡 먹기","힘들이지 않고 아주 쉽게 할 수 있는 일이에요."],["하늘의 별 따기","이루기가 아주 어려운 일이에요."],["꿩 먹고 알 먹기","한 가지 일을 해서 두 가지 좋은 것을 얻어요."],["등잔 밑이 어둡다","가까이 있는 것을 오히려 잘 모를 때가 있어요."],["윗물이 맑아야 아랫물이 맑다","윗사람이 바르게 행동해야 아랫사람도 바르게 행동해요."],["콩 심은 데 콩 나고 팥 심은 데 팥 난다","모든 일에는 원인에 맞는 결과가 나와요."],["가랑비에 옷 젖는 줄 모른다","작은 일도 계속되면 어느새 큰일이 돼요."],["급할수록 돌아가라","급할 때일수록 서두르지 말고 차근차근 해야 해요."],["고생 끝에 낙이 온다","힘든 일을 참고 견디면 좋은 일이 찾아와요."],["뜻이 있는 곳에 길이 있다","하고자 하는 마음이 있으면 방법이 생겨요."],["믿는 도끼에 발등 찍힌다","믿었던 사람이나 일에 뜻밖에 실망할 때가 있어요."],["벼는 익을수록 고개를 숙인다","훌륭한 사람일수록 겸손해요."],["빈 수레가 요란하다","아는 것이 적은 사람이 오히려 더 아는 척 떠들어요."],["사공이 많으면 배가 산으로 간다","이래라저래라 하는 사람이 많으면 일이 엉뚱한 쪽으로 흘러가요."],["서당 개 삼 년이면 풍월을 읊는다","잘 모르던 것도 오래 보고 들으면 저절로 알게 돼요."],["쇠뿔도 단김에 빼라","하려고 마음먹은 일은 바로 해야 해요."],["시작이 반이다","시작하기가 어렵지, 일단 시작하면 끝내기는 어렵지 않아요."],["아니 땐 굴뚝에 연기 날까","원인이 없으면 결과도 없어요."],["열 번 찍어 안 넘어가는 나무 없다","여러 번 계속 노력하면 이룰 수 있어요."],["작은 고추가 맵다","몸집이 작아도 야무지고 재주가 뛰어날 수 있어요."],["지렁이도 밟으면 꿈틀한다","아무리 순한 사람도 너무 괴롭히면 화를 내요."],["하늘이 무너져도 솟아날 구멍이 있다","아무리 어려워도 해결할 방법은 있어요."],["호랑이 굴에 가야 호랑이 새끼를 잡는다","원하는 것을 얻으려면 용기 내어 도전해야 해요."],["구슬이 서 말이라도 꿰어야 보배","아무리 좋은 것도 쓸모 있게 다듬어야 가치가 있어요."],["가재는 게 편","비슷한 사람끼리 서로 편을 들어요."],["개구리 올챙이 적 생각 못 한다","형편이 나아진 뒤에 어렵던 때를 잊고 잘난 척해요."],["공든 탑이 무너지랴","정성을 다한 일은 쉽게 헛되지 않아요."],["금강산도 식후경","아무리 좋은 구경도 배가 불러야 즐거워요."],["까마귀 날자 배 떨어진다","아무 상관 없는 일이 우연히 같이 일어나서 괜한 의심을 받아요."],["꼬리가 길면 밟힌다","나쁜 일을 계속하면 결국 들키고 말아요."],["남의 떡이 더 커 보인다","내 것보다 남의 것이 더 좋아 보여요."],["도토리 키 재기","비슷비슷한 사람끼리 서로 자기가 낫다고 다퉈요."],["말 한마디로 천 냥 빚을 갚는다","말을 잘하면 어려운 일도 해결할 수 있어요."],["바늘 도둑이 소도둑 된다","작은 나쁜 버릇이 자라서 큰 잘못이 돼요."],["배보다 배꼽이 더 크다","중심이 되는 것보다 거기에 딸린 것이 더 크거나 많아요."],["백 번 듣는 것이 한 번 보는 것만 못하다","직접 보는 것이 여러 번 듣는 것보다 확실해요."],["병 주고 약 준다","남에게 피해를 주고 나서 도와주는 척해요."],["비 온 뒤에 땅이 굳어진다","어려운 일을 겪고 나면 더 단단해져요."],["수박 겉 핥기","속 내용은 모르고 겉만 대충 살펴요."],["싼 게 비지떡","값이 싼 물건은 품질도 좋지 않기 쉬워요."],["우물을 파도 한 우물을 파라","한 가지 일을 꾸준히 해야 잘하게 돼요."],["자라 보고 놀란 가슴 솥뚜껑 보고 놀란다","한번 크게 놀라면 비슷한 것만 봐도 겁이 나요."],["친구 따라 강남 간다","하려던 일이 아닌데도 친구가 하니까 따라 하게 돼요."],["하나를 보면 열을 안다","한 가지 행동만 봐도 그 사람의 다른 면을 짐작할 수 있어요."],["하룻강아지 범 무서운 줄 모른다","경험이 없어서 겁 없이 덤벼요."],["호박이 넝쿨째 굴러 들어온다","뜻밖에 좋은 일이 생겨요."],["될성부른 나무는 떡잎부터 알아본다","잘될 사람은 어릴 때부터 남달라요."],["고양이 목에 방울 달기","말로는 쉽지만 실제로 하기는 아주 어려운 일이에요."],["누이 좋고 매부 좋다","양쪽 모두에게 좋은 일이에요."]];
+var PROVERBS_EN=["Treat others the way you want to be treated.","Every little bit helps.","Nobody's perfect.","Don't lock the barn door after the horse is gone.","Many hands make light work.","A journey of a thousand miles begins with a single step.","Old habits die hard.","The walls have ears.","When elephants fight, it is the grass that suffers.","Word travels fast.","Look before you leap.","Speak of the devil!","Living in a bubble.","It's a piece of cake.","It's like finding a needle in a haystack.","Kill two birds with one stone.","It was right under my nose.","Lead by example.","You reap what you sow.","Little things add up.","Haste makes waste.","No pain, no gain.","Where there's a will, there's a way.","To be stabbed in the back.","Stay humble.","Empty vessels make the most noise.","Too many cooks spoil the broth.","You pick things up as you go.","Strike while the iron is hot.","Well begun is half done.","Where there's smoke, there's fire.","If at first you don't succeed, try, try again.","Good things come in small packages.","Even a worm will turn.","Every cloud has a silver lining.","Nothing ventured, nothing gained.","It's not what you have, it's what you do with it.","Birds of a feather flock together.","Don't forget where you came from.","Hard work pays off.","An army marches on its stomach.","To be in the wrong place at the wrong time.","The truth always comes out.","The grass is always greener on the other side.","Six of one, half a dozen of the other.","Kind words go a long way.","It's a slippery slope.","The tail is wagging the dog.","Seeing is believing.","To cause a problem and then pretend to fix it.","Tough times make you stronger.","To only scratch the surface.","You get what you pay for.","Jack of all trades, master of none.","Once bitten, twice shy.","Monkey see, monkey do.","You can tell a lot from a little.","Fools rush in where angels fear to tread.","To hit the jackpot.","As the twig is bent, so grows the tree.","Who will bell the cat?","It's a win-win."];
+var OL='stroke="#4A3A2E" stroke-width="3" stroke-linejoin="round"';
+var COATS={cream:{n:"크림",c:"#F6DDB0",d:"#D2A066",l:"#FFF6E2"},white:{n:"하양",c:"#FFFFFF",d:"#E6DFD4",l:"#FFFFFF"},brown:{n:"갈색",c:"#C08147",d:"#85532A",l:"#EFD2AC"},
+  black:{n:"까망",c:"#5A5562",d:"#37333D",l:"#DDD6E2"},spot:{n:"점박이",c:"#FFFFFF",d:"#B9783F",l:"#FFFFFF",spot:"#C98A52"}};
+var ITEMS=[
+  {id:"gum",c:"snack",n:"개껌",e:"🦴",p:3,love:3},{id:"jerky",c:"snack",n:"닭고기 육포",e:"🍗",p:6,love:7},{id:"cake",c:"snack",n:"강아지 케이크",e:"🎂",p:15,love:20},
+  {id:"ball",c:"toy",n:"통통 공",e:"🎾",p:10},{id:"rope",c:"toy",n:"터그 장난감",e:"🪢",p:14},
+  {id:"ribbon",c:"wear",s:"head",n:"분홍 리본",e:"🎀",p:8},{id:"party",c:"wear",s:"head",n:"파티 모자",e:"🥳",p:10},{id:"beanie",c:"wear",s:"head",n:"털모자",e:"🧶",p:12},
+  {id:"crown",c:"wear",s:"head",n:"왕관",e:"👑",p:40,free:"st7"},
+  {id:"glasses",c:"wear",s:"face",n:"동그란 안경",e:"👓",p:12,free:"b5"},{id:"sun",c:"wear",s:"face",n:"선글라스",e:"🕶️",p:15},
+  {id:"bow",c:"wear",s:"neck",n:"나비넥타이",e:"🎗️",p:8},{id:"bandana",c:"wear",s:"neck",n:"초록 반다나",e:"🧣",p:8},{id:"scarf",c:"wear",s:"neck",n:"파란 목도리",e:"🧣",p:10},
+  {id:"sweater",c:"wear",s:"body",n:"빨간 스웨터",e:"🧥",p:20},{id:"rain",c:"wear",s:"body",n:"노란 우비",e:"☔",p:18},
+  {id:"bowl",c:"room",n:"밥그릇",e:"🥣",p:8},{id:"plant",c:"room",n:"화분",e:"🪴",p:10},{id:"cushion",c:"room",n:"보라 방석",e:"🛋️",p:12},{id:"rug",c:"room",n:"분홍 러그",e:"🧺",p:15},
+  {id:"house",c:"room",n:"강아지 집",e:"🏠",p:35},{id:"trophy",c:"room",n:"줄넘기 트로피",e:"🏆",p:null,free:"j7"}];
+var TRICKS=[{lv:2,n:"앉아",a:"sit",say:"앉았어! 나 잘하지?"},{lv:3,n:"점프",a:"jump",say:"폴짝! 높이 뛰었지?"},{lv:5,n:"빙글빙글",a:"spin",say:"빙글빙글~ 어지러워, 멍!"},{lv:7,n:"춤추기",a:"dance",say:"씰룩씰룩! 같이 춤추자!"}];
+function normPup(x){
+  if(!x||typeof x!=="object"||!COATS[x.coat]) return null;
+  var p={name:String(x.name||"멍멍이").slice(0,12),coat:x.coat,love:Math.max(0,+x.love||0),wear:{},own:{},room:{},day:null};
+  ITEMS.forEach(function(it){ if(it.c==="snack") return;
+    if(x.own&&x.own[it.id]) p.own[it.id]=true;
+    if(it.c==="room"&&x.room&&x.room[it.id]&&p.own[it.id]) p.room[it.id]=true;
+    if(it.c==="wear"&&x.wear&&x.wear[it.s]===it.id&&p.own[it.id]) p.wear[it.s]=it.id; });
+  if(x.day&&typeof x.day==="object"&&typeof x.day.k==="string") p.day={k:x.day.k,pet:+x.day.pet||0,ball:+x.day.ball||0,rope:+x.day.rope||0,fed:+x.day.fed||0};
+  return p;
+}
 function defaults(){return {v:2,
   cfg:{name:"해나",city:"서울",note:"오늘도 네가 제일 반짝여. 사랑해!",unlockEvery:15,jumpGoal:100,
     hw:[{id:uid(),e:"🔢",t:"수학 연산 문제집 2쪽",n:3},{id:uid(),e:"📗",t:"영어 원서 읽기",n:5},{id:uid(),e:"✍️",t:"받아쓰기 연습",n:1},{id:uid(),e:"📓",t:"일기 쓰기",n:2},{id:uid(),e:"📝",t:"독서록 쓰기",n:1}],
     tasks:{
-      morning:[T("🛏️","이불 정리하기"),T("🪥","세수하고 양치하기"),T("👕","옷 갈아입기"),T("🍚","아침밥 먹기"),T("🎒","가방 챙겨서 나가기")],
+      morning:[T("🛏️","이불 정리하기"),T("🪥","세수하고 양치하기"),T("👕","옷 갈아입기"),T("🍚","아침밥 먹기"),T("🎒","가방 챙겨서 나가기",[1,2,3,4,5])],
       after:[T("🧼","손 씻기"),T("📒","알림장이랑 물통 꺼내기"),T("✏️","숙제하기"),T("📖","책 20분 읽기")],
       night:[T("🚿","씻고 양치하기"),T("🧸","내 방 정리하기"),T("👗","내일 입을 옷 골라 두기"),T("🌙","9시 반까지 눕기")]},
     rewards:[{id:uid(),e:"🍪",t:"간식 하나 고르기",c:15},{id:uid(),e:"📺",t:"영상 30분 보기",c:25},{id:uid(),e:"🎲",t:"보드게임 한 판 같이 하기",c:30},
       {id:uid(),e:"🍕",t:"주말 저녁 메뉴 정하기",c:45},{id:uid(),e:"🎡",t:"아빠랑 둘이 나들이",c:90}]},
-  days:{},weeks:{},banked:0,bonus:0,spent:0,red:[]};}
+  days:{},weeks:{},banked:0,bonus:0,spent:0,red:[],books:[],miss:[],badges:{},pq:0,pup:null};}
 
 function normalize(s){
   var d=defaults(); if(!s||typeof s!=="object") return d;
@@ -432,16 +548,23 @@ function normalize(s){
   d.cfg.city=typeof c.city==="string"&&c.city?c.city:"서울";
   d.cfg.unlockEvery=[10,15,20,30].indexOf(c.unlockEvery)>=0?c.unlockEvery:15;
   if(c.tasks&&typeof c.tasks==="object") ROUTINES.forEach(function(r){
-    if(Array.isArray(c.tasks[r.k])) d.cfg.tasks[r.k]=c.tasks[r.k].filter(function(t){return t&&t.id}).map(function(t){return {id:String(t.id),e:String(t.e||"⭐"),t:String(t.t||"")}});
+    if(Array.isArray(c.tasks[r.k])) d.cfg.tasks[r.k]=c.tasks[r.k].filter(function(t){return t&&t.id}).map(normTask);
   });
   if(Array.isArray(c.rewards)) d.cfg.rewards=c.rewards.filter(function(t){return t&&t.id}).map(function(t){return {id:String(t.id),e:String(t.e||"🎁"),t:String(t.t||""),c:Math.max(1,Math.round(+t.c)||1)}});
   if(s.days&&typeof s.days==="object") Object.keys(s.days).forEach(function(k){
     var x=s.days[k]; if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||!x) return;
-    var q={}; if(x.q&&typeof x.q==="object") SUBJ.forEach(function(sb){ if(x.q[sb.k]!=null) q[sb.k]=+x.q[sb.k]||0 });
+    var q={}; if(x.q&&typeof x.q==="object") ["en","ko","ma","re"].forEach(function(sk){ if(x.q[sk]!=null) q[sk]=+x.q[sk]||0 });
     d.days[k]={done:x.done&&typeof x.done==="object"?x.done:{},stars:+x.stars||0,r:Array.isArray(x.r)?x.r.map(Boolean):[false,false,false],q:q};
+    if(x.p) d.days[k].p=1;
+    if(x.pf) d.days[k].pf=true;
+    if(+x.b>0) d.days[k].b=Math.round(+x.b);
     if(+x.j>0) d.days[k].j=Math.min(99999,Math.round(+x.j));
   });
-  d.banked=+s.banked||0; d.bonus=+s.bonus||0; d.spent=+s.spent||0;
+  d.banked=+s.banked||0; d.bonus=+s.bonus||0; d.spent=+s.spent||0; d.pq=Math.round(+s.pq)||0;
+  d.pup=normPup(s.pup);
+  if(Array.isArray(s.books)) d.books=s.books.filter(function(b){return b&&b.id&&b.t}).slice(-500).map(function(b){return {id:String(b.id),t:String(b.t).slice(0,60),k:b.k==="en"?"en":"ko",d:String(b.d||"")}});
+  if(Array.isArray(s.miss)) d.miss=s.miss.filter(function(m){return m&&typeof m.q==="string"&&Array.isArray(m.ch)&&typeof m.ans==="string"}).slice(-40).map(function(m){return {s:String(m.s||"ko"),q:m.q,ch:m.ch.map(String),ans:m.ans}});
+  if(s.badges&&typeof s.badges==="object") Object.keys(s.badges).forEach(function(k){d.badges[k]=String(s.badges[k])});
   if(Array.isArray(s.red)) d.red=s.red.filter(function(x){return x&&x.id}).map(function(x){return {id:String(x.id),t:String(x.t||""),e:String(x.e||"🎁"),c:+x.c||0,d:String(x.d||""),st:x.st==="done"?"done":"wait"}});
   return d;
 }
@@ -464,13 +587,17 @@ function recomputeWeek(k){
   state.cfg.hw.forEach(function(x){var n=hwCount(w,x); s+=n; if(n<x.n) full=false});
   if(full) s+=5; w.stars=s; w.full=full;
 }
+function tasksOn(rk,dow){return state.cfg.tasks[rk].filter(function(t){return !t.w||t.w.indexOf(dow)>=0})}
+function dowOf(k){var a=k.split("-"); return new Date(+a[0],+a[1]-1,+a[2]).getDay()}
 function recompute(k){
-  var d=state.days[k]; if(!d) return; var s=0,r=[];
-  ROUTINES.forEach(function(ro){var ts=state.cfg.tasks[ro.k],n=ts.filter(function(t){return d.done[t.id]}).length;
-    s+=n; var full=ts.length>0&&n===ts.length; if(full) s+=2; r.push(full);});
-  if(r[0]&&r[1]&&r[2]) s+=3;
+  var d=state.days[k]; if(!d) return; var s=0,r=[],any=false,all=true,dow=dowOf(k);
+  ROUTINES.forEach(function(ro){var ts=tasksOn(ro.k,dow),n=ts.filter(function(t){return d.done[t.id]}).length;
+    s+=n; var full=ts.length>0&&n===ts.length; if(full){s+=2; any=true} else if(ts.length) all=false; r.push(full);});
+  d.pf=any&&all; if(d.pf) s+=3;
   if(d.q) Object.keys(d.q).forEach(function(q){s+=+d.q[q]||0});
   if(+d.j>0) s+=2;
+  if(d.p) s+=1;
+  s+=Math.min(2,+d.b||0)*2;
   d.stars=s; d.r=r;
 }
 function earned(){var s=state.banked+state.bonus; Object.keys(state.days).forEach(function(k){s+=state.days[k].stars||0});
@@ -491,6 +618,7 @@ function prune(){
 var docRef=null, writing=false, dirty=false, syncEl=document.getElementById("sync");
 function setSync(t){syncEl.textContent=t}
 function save(){
+  checkBadges();
   try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}
   if(!docRef) return; dirty=true; pump();
 }
@@ -603,6 +731,147 @@ function renderJump(){
   fill($("jpWeek"),out);
 }
 
+/* ---------- proverb of the day ---------- */
+function proverbToday(){var n=new Date(),i=Math.floor(Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())/864e5)%PROVERBS.length; return [PROVERBS[i][0],PROVERBS[i][1],PROVERBS_EN[i]||""]}
+function revealProverb(){
+  var d=ensureDay(today()); if(d.p) return; var fBefore=friendCount();
+  d.p=1; recompute(today()); prune(); cheerUp(fBefore,"속담을 우리말과 영어로 배웠어요! 별 1개",false); save(); render();
+}
+function renderProverb(){
+  var pv=proverbToday(),seen=!!dayRec(today()).p;
+  $("pvText").textContent=pv[0]; $("pvMean").textContent=pv[1]; $("pvMean").hidden=!seen; $("pvBtn").hidden=seen; $("pvEnText").textContent=pv[2]; $("pvEn").hidden=!seen||!pv[2];
+}
+
+/* ---------- puppy ---------- */
+var pupTab="snack",pupArmed=null,pupSay=null,pupAnim=null,pupCoatPick="cream";
+function lvOf(love){var lv=1; while(lv<20&&love>=7.5*lv*(lv+1)) lv++; return lv}
+function stageOf(lv){return lv<3?"아기 강아지":lv<5?"꼬마 강아지":lv<8?"씩씩한 강아지":"멋진 강아지"}
+function pupDay(){var p=state.pup; if(!p.day||p.day.k!==today()) p.day={k:today(),pet:0,ball:0,rope:0,fed:0}; return p.day}
+function itemOf(id){for(var i=0;i<ITEMS.length;i++) if(ITEMS[i].id===id) return ITEMS[i]; return null}
+function dogParts(p){
+  var k=COATS[p.coat]||COATS.cream,w=p.wear||{},s="";
+  s+='<g class="tail"><path d="M134 152 q36 -6 30 -42 q-4 -12 -14 -4 q8 22 -18 28z" fill="'+k.d+'" '+OL+'/></g>';
+  s+='<ellipse cx="100" cy="150" rx="42" ry="36" fill="'+k.c+'" '+OL+'/><ellipse cx="100" cy="160" rx="24" ry="22" fill="'+k.l+'"/>';
+  if(w.body==="sweater") s+='<path d="M60 138 q40 -26 80 0 v24 q-40 22 -80 0z" fill="#E4572E" '+OL+'/><path d="M62 150 q38 -18 76 0" fill="none" stroke="#fff" stroke-width="4"/><path d="M62 162 q38 16 76 0" fill="none" stroke="#fff" stroke-width="4"/>';
+  if(w.body==="rain") s+='<path d="M60 138 q40 -26 80 0 v24 q-40 22 -80 0z" fill="#FFD23F" '+OL+'/><circle cx="100" cy="146" r="4" fill="#4A3A2E"/><circle cx="100" cy="162" r="4" fill="#4A3A2E"/>';
+  s+='<ellipse cx="80" cy="183" rx="13" ry="9" fill="'+k.c+'" '+OL+'/><ellipse cx="120" cy="183" rx="13" ry="9" fill="'+k.c+'" '+OL+'/>';
+  s+='<circle cx="100" cy="85" r="46" fill="'+k.c+'" '+OL+'/>';
+  if(k.spot) s+='<ellipse cx="121" cy="76" rx="17" ry="20" fill="'+k.spot+'"/>';
+  s+='<ellipse cx="55" cy="84" rx="15" ry="30" transform="rotate(18 55 84)" fill="'+k.d+'" '+OL+'/><ellipse cx="145" cy="84" rx="15" ry="30" transform="rotate(-18 145 84)" fill="'+k.d+'" '+OL+'/>';
+  s+='<ellipse cx="100" cy="103" rx="22" ry="16" fill="'+k.l+'"/><circle cx="74" cy="100" r="7" fill="#F7A6B4" opacity=".55"/><circle cx="126" cy="100" r="7" fill="#F7A6B4" opacity=".55"/>';
+  s+='<circle cx="82" cy="82" r="6.5" fill="#2B2228"/><circle cx="118" cy="82" r="6.5" fill="#2B2228"/><circle cx="84" cy="80" r="2.2" fill="#fff"/><circle cx="120" cy="80" r="2.2" fill="#fff"/>';
+  s+='<path d="M94 108 q6 13 12 0z" fill="#F28B9B" stroke="#4A3A2E" stroke-width="2"/><ellipse cx="100" cy="94" rx="7" ry="5" fill="#2B2228"/>';
+  s+='<path d="M100 99 q-8 10 -16 3 M100 99 q8 10 16 3" fill="none" stroke="#4A3A2E" stroke-width="3" stroke-linecap="round"/>';
+  if(w.neck==="scarf") s+='<path d="M68 120 q32 16 64 0 v12 q-32 16 -64 0z" fill="#3D8FD1" '+OL+'/><path d="M116 134 l12 26 l-14 3 l-8 -25z" fill="#3D8FD1" '+OL+'/>';
+  if(w.neck==="bow") s+='<path d="M100 130 l-20 -11 v22z M100 130 l20 -11 v22z" fill="#D9578D" '+OL+'/><circle cx="100" cy="130" r="5.5" fill="#D9578D" '+OL+'/>';
+  if(w.neck==="bandana") s+='<path d="M68 120 q32 14 64 0 l-32 36z" fill="#2E9E6B" '+OL+'/><circle cx="92" cy="134" r="2.5" fill="#fff"/><circle cx="106" cy="138" r="2.5" fill="#fff"/>';
+  if(w.face==="glasses") s+='<circle cx="82" cy="82" r="13" fill="rgba(255,255,255,.28)" stroke="#4A3A2E" stroke-width="3.5"/><circle cx="118" cy="82" r="13" fill="rgba(255,255,255,.28)" stroke="#4A3A2E" stroke-width="3.5"/><path d="M95 82 h10" stroke="#4A3A2E" stroke-width="3.5"/>';
+  if(w.face==="sun") s+='<rect x="66" y="72" width="30" height="19" rx="8" fill="#2B2830"/><rect x="104" y="72" width="30" height="19" rx="8" fill="#2B2830"/><path d="M94 79 h12" stroke="#2B2830" stroke-width="4"/>';
+  if(w.head==="ribbon") s+='<path d="M132 50 l-17 -11 v22z M132 50 l17 -11 v22z" fill="#FF7AA8" '+OL+'/><circle cx="132" cy="50" r="5.5" fill="#FF7AA8" '+OL+'/>';
+  if(w.head==="crown") s+='<path d="M72 50 l4 -30 l14 17 l10 -24 l10 24 l14 -17 l4 30z" fill="#FFC22E" '+OL+'/><circle cx="100" cy="40" r="4" fill="#E4572E"/><circle cx="84" cy="43" r="3" fill="#3D8FD1"/><circle cx="116" cy="43" r="3" fill="#3D8FD1"/>';
+  if(w.head==="beanie") s+='<path d="M58 62 q42 -64 84 0z" fill="#E4572E" '+OL+'/><rect x="55" y="55" width="90" height="13" rx="6.5" fill="#fff" '+OL+'/><circle cx="100" cy="24" r="9" fill="#fff" '+OL+'/>';
+  if(w.head==="party") s+='<path d="M100 2 l-22 47 h44z" fill="#8E6BD6" '+OL+'/><circle cx="100" cy="5" r="6" fill="#FFC22E" '+OL+'/><circle cx="96" cy="30" r="3" fill="#FFC22E"/><circle cx="106" cy="40" r="3" fill="#FF7AA8"/>';
+  return s;
+}
+function dogThumb(coat){return '<svg viewBox="0 0 200 200" width="100%" aria-hidden="true">'+dogParts({coat:coat,wear:{}})+'</svg>'}
+function sceneSVG(p){
+  var r=p.room||{},lv=lvOf(p.love),sc=(0.78+Math.min(lv,10)*0.024).toFixed(3),s='<svg viewBox="0 0 360 250" width="100%" role="img" aria-label="강아지 방">';
+  s+='<rect width="360" height="250" rx="18" fill="#FFF1DC"/><rect y="186" width="360" height="64" fill="#E7C49A"/><rect y="182" width="360" height="6" fill="#D2A873"/>';
+  s+='<rect x="24" y="30" width="78" height="62" rx="8" fill="#BFE4FF" '+OL+'/><path d="M63 30 v62 M24 61 h78" stroke="#4A3A2E" stroke-width="3"/>';
+  if(r.trophy) s+='<path d="M262 96 h76" stroke="#4A3A2E" stroke-width="5" stroke-linecap="round"/><path d="M286 56 h28 v10 q0 16 -14 18 q-14 -2 -14 -18z" fill="#FFC22E" '+OL+'/><path d="M294 84 h12 v8 h-12z" fill="#FFC22E" '+OL+'/>';
+  if(r.plant) s+='<path d="M318 150 q-20 -30 -4 -50 q10 20 4 50z M322 150 q24 -22 14 -46 q-14 16 -14 46z" fill="#2E9E6B" '+OL+'/><path d="M304 150 h32 l-5 36 h-22z" fill="#D9805B" '+OL+'/>';
+  if(r.house) s+='<path d="M14 200 v-58 l46 -36 l46 36 v58z" fill="#D9805B" '+OL+'/><path d="M6 146 l54 -42 l54 42" fill="none" stroke="#B5483F" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 200 v-32 q20 -24 40 0 v32z" fill="#5A3A2A"/>';
+  if(r.rug) s+='<ellipse cx="190" cy="218" rx="118" ry="22" fill="#F3A7B8" '+OL+'/><ellipse cx="190" cy="218" rx="92" ry="14" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="6 8"/>';
+  if(r.cushion) s+='<ellipse cx="190" cy="214" rx="74" ry="17" fill="#8E6BD6" '+OL+'/>';
+  s+='<g transform="translate(190,216) scale('+sc+') translate(-100,-192)"><g class="dog-anim" id="dogAnim">'+dogParts(p)+'</g></g>';
+  if(r.bowl) s+='<path d="M276 204 h50 l-7 20 h-36z" fill="#3D8FD1" '+OL+'/><ellipse cx="301" cy="204" rx="25" ry="5" fill="#B5783F" '+OL+'/>';
+  if(p.own&&p.own.ball) s+='<circle cx="96" cy="226" r="12" fill="#C6E04A" '+OL+'/><path d="M86 220 q10 6 20 0" fill="none" stroke="#fff" stroke-width="3"/>';
+  if(p.own&&p.own.rope) s+='<path d="M236 232 q10 -14 22 0 q10 12 22 0" fill="none" stroke="#D9578D" stroke-width="8" stroke-linecap="round"/>';
+  return s+'</svg>';
+}
+function pupLine(){
+  var p=state.pup,ph=phase(),d=dayRec(today());
+  if(pupSay) return pupSay;
+  if(d.pf) return "오늘 할 일을 다 했네! "+state.cfg.name+" 최고야, 멍멍!";
+  return ph==="morning"?"좋은 아침! 오늘도 같이 힘내자, 멍!":ph==="after"?"학교 잘 다녀왔어? 보고 싶었어, 멍!":"오늘도 수고했어. 포근하게 잘 자, 멍…";
+}
+function addLove(n,say,anim){
+  var p=state.pup,before=lvOf(p.love); p.love+=n; pupSay=say; pupAnim=anim||"jump";
+  var after=lvOf(p.love); chime(after>before);
+  if(after>before){ var tr=TRICKS.filter(function(t){return t.lv===after})[0];
+    toast(p.name+(((p.name.charCodeAt(p.name.length-1)-44032)%28>0&&p.name.charCodeAt(p.name.length-1)>=44032&&p.name.charCodeAt(p.name.length-1)<=55203)?"이가":"가")+" Lv."+after+"이 됐어요!"+(tr?" 새 재주 '"+tr.n+"'를 배웠어요":"")); confetti(120) }
+  save(); render();
+}
+function spend(cost){
+  if(balance()<cost){toast("별이 "+(cost-balance())+"개 더 필요해요"); return false}
+  state.spent+=cost; return true;
+}
+function adoptPup(){
+  var nm=($("pupName").value||"").trim().slice(0,12)||"멍멍이";
+  state.pup={name:nm,coat:pupCoatPick,love:0,wear:{},own:{},room:{},day:{k:today(),pet:0,ball:0,rope:0,fed:0}};
+  pupSay="안녕! 나는 "+nm+"야. 잘 부탁해, 멍!"; pupAnim="jump"; chime(true); confetti(120); save(); render();
+}
+function petPup(){var d=pupDay(); if(d.pet>=3){pupSay="헤헤, 많이 쓰다듬어 줘서 기분 좋아!"; pupAnim="dance"; render(); return} d.pet++; addLove(1,"쓰담쓰담 좋아! 멍!","dance")}
+function playPup(kind){var d=pupDay(); if(d[kind]>=3){pupSay="헥헥, 오늘은 실컷 놀았어! 내일 또 놀자!"; pupAnim="sit"; render(); return} d[kind]++; addLove(2,kind==="ball"?"공 잡았다! 한 번 더 던져 줘!":"영차영차! 내가 이겼지? 멍!",kind==="ball"?"jump":"dance")}
+function feedPup(it){
+  var d=pupDay(); if(d.fed>=5){pupSay="배불러! 간식은 내일 또 먹을래."; pupAnim="sit"; render(); return}
+  if(!spend(it.p)) return; d.fed++; addLove(it.love,"냠냠! "+it.n+" 정말 맛있어!","jump");
+}
+function buyItem(it,free){
+  if(!free){ if(pupArmed!==it.id){ if(balance()<it.p){toast("별이 "+(it.p-balance())+"개 더 필요해요"); return} pupArmed=it.id; renderPup(); return } if(!spend(it.p)) return }
+  pupArmed=null; var p=state.pup; p.own[it.id]=true;
+  if(it.c==="wear") p.wear[it.s]=it.id; if(it.c==="room") p.room[it.id]=true;
+  pupSay=it.c==="toy"?"우와, "+it.n+"! 같이 놀자!":it.c==="room"?"우리 방이 더 멋져졌어!":"나 어때? 잘 어울려?"; pupAnim="spin"; chime(true); confetti(60); save(); render();
+}
+function useItem(it){
+  var p=state.pup;
+  if(it.c==="wear") p.wear[it.s]=p.wear[it.s]===it.id?null:it.id; else p.room[it.id]=!p.room[it.id];
+  pupSay=null; save(); render();
+}
+function doTrick(t){pupSay=t.say; pupAnim=t.a; chime(false); renderPup()}
+function renderPup(){
+  var body=$("pupBody"),p=state.pup;
+  if(!p){
+    if($("pupName")){ [].forEach.call(body.querySelectorAll(".coat"),function(b){b.setAttribute("aria-pressed",String(b.dataset.c===pupCoatPick))}); return }
+    var coats=h("div",{"class":"coats"});
+    Object.keys(COATS).forEach(function(c){var b=h("button",{type:"button","class":"coat","data-c":c,"aria-pressed":String(c===pupCoatPick),"aria-label":COATS[c].n+" 강아지",onclick:function(){pupCoatPick=c; renderPup()}});
+      b.innerHTML=dogThumb(c); b.appendChild(h("span",{text:COATS[c].n})); coats.appendChild(b)});
+    fill(body,[h("h2",{text:"강아지를 데려와요"}),h("p",{"class":"sub",text:"마음에 드는 강아지를 고르고 이름을 지어 주세요."}),coats,
+      h("form",{"class":"row",style:"margin-top:14px",onsubmit:function(ev){ev.preventDefault(); adoptPup()}},h("label",{"for":"pupName",text:"강아지 이름"}),
+        h("input",{"class":"in t",id:"pupName",maxlength:12,autocomplete:"off",placeholder:"멍멍이"}),h("button",{"class":"btn",type:"submit",text:"우리 집에 데려오기"}))]);
+    return;
+  }
+  var lv=lvOf(p.love),base=7.5*(lv-1)*lv,next=7.5*lv*(lv+1),d=pupDay(),scene=h("div",{"class":"pup-scene"}); scene.innerHTML=sceneSVG(p);
+  var acts=[h("button",{type:"button","class":"btn",text:"쓰다듬기"+(d.pet<3?" ("+(3-d.pet)+"번 남음)":""),onclick:petPup})];
+  if(p.own.ball) acts.push(h("button",{type:"button","class":"btn",text:"공놀이"+(d.ball<3?" ("+(3-d.ball)+")":""),onclick:function(){playPup("ball")}}));
+  if(p.own.rope) acts.push(h("button",{type:"button","class":"btn",text:"터그 놀이"+(d.rope<3?" ("+(3-d.rope)+")":""),onclick:function(){playPup("rope")}}));
+  var tricks=TRICKS.map(function(t){return h("button",{type:"button","class":"btn ghost",disabled:lv<t.lv,text:lv<t.lv?t.n+" · Lv."+t.lv+"에 배워요":t.n,onclick:function(){doTrick(t)}})});
+  var left=h("div",{"class":"pup-left"},h("p",{"class":"bubble",text:pupLine()}),scene,
+    h("div",{"class":"wx-top",style:"margin:10px 0 6px"},h("h2",{text:p.name}),h("small",{text:"Lv."+lv+" "+stageOf(lv)+(lv<20?" · 다음 레벨까지 사랑 "+Math.ceil(next-p.love):"")})),
+    h("div",{"class":"bar","aria-hidden":"true"},h("i",{style:"width:"+(lv>=20?100:Math.round((p.love-base)/(next-base)*100))+"%;background:#FF7AA8"})),
+    h("div",{"class":"row"},acts.reduce(frag,document.createDocumentFragment())),
+    h("div",{"class":"row"},tricks.reduce(frag,document.createDocumentFragment())));
+  var cats=[["snack","간식"],["toy","장난감"],["wear","옷"],["room","방 꾸미기"]];
+  var tabs=h("div",{"class":"pup-tabs",role:"tablist"},cats.map(function(c){return h("button",{type:"button",role:"tab","aria-selected":String(pupTab===c[0]),text:c[1],onclick:function(){pupTab=c[0]; pupArmed=null; renderPup()}})}).reduce(frag,document.createDocumentFragment()));
+  var list=h("ul",{"class":"shop"});
+  ITEMS.filter(function(it){return it.c===pupTab}).forEach(function(it){
+    var own=!!p.own[it.id],gift=it.free&&state.badges[it.free],btn,note="별 "+it.p+"개";
+    if(it.c==="snack"){note="별 "+it.p+"개 · 사랑 +"+it.love; btn=h("button",{type:"button","class":"btn",disabled:d.fed>=5,text:d.fed>=5?"배불러요":"주기",onclick:function(){feedPup(it)}})}
+    else if(own){
+      if(it.c==="toy"){note="가지고 있어요"; btn=null}
+      else{var on=it.c==="wear"?p.wear[it.s]===it.id:!!p.room[it.id]; note="가지고 있어요"; btn=h("button",{type:"button","class":"btn "+(on?"ghost":""),text:it.c==="wear"?(on?"벗기":"입히기"):(on?"치우기":"놓기"),onclick:function(){useItem(it)}})}
+    }
+    else if(gift){note="배지 선물이에요"; btn=h("button",{type:"button","class":"btn",text:"선물 받기",onclick:function(){buyItem(it,true)}})}
+    else if(it.p==null){var bd=BADGES.filter(function(b){return b.id===it.free})[0]; note="'"+(bd?bd.n:"")+"' 배지를 받으면 선물로 줘요"; btn=null}
+    else{ if(it.free){var b2=BADGES.filter(function(b){return b.id===it.free})[0]; note+=" · '"+(b2?b2.n:"")+"' 배지를 받으면 공짜"}
+      btn=h("button",{type:"button","class":"btn",disabled:balance()<it.p&&pupArmed!==it.id,text:pupArmed===it.id?"정말 살까요":balance()<it.p?(it.p-balance())+"개 더":"사기",onclick:function(){buyItem(it,false)}})}
+    list.appendChild(h("li",{"class":"rw"},h("span",{"class":"em","aria-hidden":"true",text:it.e}),h("span",{"class":"tx"},it.n,h("small",{text:note})),btn));
+  });
+  fill(body,[h("div",{"class":"pup-wrap"},left,h("div",{"class":"pup-right"},h("div",{"class":"wx-top"},h("h2",{text:"강아지 가게"}),h("small",{text:"쓸 수 있는 별 "+balance()+"개"})),tabs,list,
+    h("p",{"class":"rule",text:pupTab==="snack"?"간식은 하루에 다섯 번까지 줄 수 있어요. 사랑이 쌓이면 강아지가 자라고 새 재주를 배워요.":"한 번 사면 계속 쓸 수 있어요."})))]);
+  if(pupAnim){var g=$("dogAnim"); if(g&&!reduce) g.setAttribute("class","dog-anim a-"+pupAnim); pupAnim=null}
+}
+
 /* ---------- quiz ---------- */
 var quiz=null;
 function shuffle(a){a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i]; a[i]=a[j]; a[j]=t} return a}
@@ -626,24 +895,31 @@ function mathQ(type){
 }
 function startQuiz(sub){
   var qs;
-  if(sub==="ma") qs=shuffle([0,1,2,3,4,5,6]).slice(0,5).map(mathQ);
-  else qs=shuffle(sub==="en"?BANK_EN:BANK_KO).slice(0,5).map(function(it){return {q:it[0],ch:shuffle(it.slice(1)),ans:it[1]}});
+  if(sub==="re") qs=shuffle(state.miss).slice(0,5).map(function(m){return {s:m.s,q:m.q,ch:shuffle(m.ch),ans:m.ans}});
+  else if(sub==="ma") qs=shuffle([0,1,2,3,4,5,6]).slice(0,5).map(mathQ).map(function(x){x.s="ma"; return x});
+  else qs=shuffle(sub==="en"?BANK_EN:BANK_KO).slice(0,5).map(function(it){return {s:sub,q:it[0],ch:shuffle(it.slice(1)),ans:it[1]}});
+  if(!qs.length) return;
   quiz={sub:sub,qs:qs,i:0,picked:null,score:0,done:false,gained:0};
   renderQuiz();
 }
 function pickAnswer(ch){
   if(!quiz||quiz.picked!=null) return;
-  quiz.picked=ch; var ok=ch===quiz.qs[quiz.i].ans; if(ok){quiz.score++; chime(false)}
+  var q=quiz.qs[quiz.i],ok=ch===q.ans,ix=-1; quiz.picked=ch;
+  state.miss.forEach(function(m,i){ if(m.q===q.q) ix=i });
+  if(ok){ quiz.score++; chime(false); if(quiz.sub==="re"&&ix>=0){state.miss.splice(ix,1); save()} }
+  else if(ix<0){ state.miss.push({s:q.s,q:q.q,ch:q.ch.slice(),ans:q.ans}); if(state.miss.length>40) state.miss.shift(); save() }
   renderQuiz();
 }
 function nextQ(){
   if(quiz.i<quiz.qs.length-1){quiz.i++; quiz.picked=null; renderQuiz(); return}
   quiz.done=true;
-  var reward=quiz.score===5?3:quiz.score>=3?2:0,d=ensureDay(today()),prev=d.q[quiz.sub],fBefore=friendCount();
-  quiz.gained=Math.max(0,reward-(+prev||0));
-  if(prev==null||quiz.gained>0){ d.q[quiz.sub]=Math.max(reward,+prev||0); recompute(today()); prune(); save() }
-  if(quiz.gained>0) cheerUp(fBefore,"퀴즈 별 "+quiz.gained+"개를 받았어요!",quiz.score===5);
-  render();
+  var all=quiz.score===quiz.qs.length,re=quiz.sub==="re",reward=re?(all?1:0):(all?3:quiz.score>=3?2:0),
+      d=ensureDay(today()),prev=+d.q[quiz.sub]||0,fBefore=friendCount();
+  if(all&&!re) state.pq=(state.pq||0)+1;
+  quiz.gained=Math.max(0,reward-prev);
+  d.q[quiz.sub]=Math.max(reward,prev); recompute(today()); prune();
+  if(quiz.gained>0) cheerUp(fBefore,"퀴즈 별 "+quiz.gained+"개를 받았어요!",all);
+  save(); render();
 }
 function renderQuiz(){
   var body=$("quizBody"),d=dayRec(today());
@@ -654,38 +930,112 @@ function renderQuiz(){
         return h("button",{type:"button","class":"sub-btn",onclick:function(){startQuiz(sb.k)}},
           h("span",{"class":"e","aria-hidden":"true",text:sb.e}),h("span",{"class":"nm",text:sb.nm}),
           h("span",{"class":"st",text:got>=3?"오늘 별 3개를 다 받았어요":got>0?"오늘 별 "+got+"개 받았어요":"별을 받을 수 있어요"}));
-      }).reduce(function(f,n){f.appendChild(n); return f},document.createDocumentFragment())),
+      }).reduce(frag,document.createDocumentFragment())),
+      state.miss.length?h("div",{"class":"row",style:"margin-top:14px"},h("button",{type:"button","class":"btn",text:"틀린 문제 다시 풀기 ("+state.miss.length+"개)",onclick:function(){startQuiz("re")}}),
+        h("span",{"class":"hint",style:"margin:0",text:"맞히면 목록에서 사라져요. 다 맞히면 별 1개 (하루 한 번)"})):null,
       h("p",{"class":"rule",text:"3개 이상 맞히면 별 2개 · 다 맞히면 별 3개 · 과목마다 하루에 별 3개까지 받아요. 연습은 몇 번이든 할 수 있어요."})]);
     return;
   }
-  var sb=SUBJ.filter(function(x){return x.k===quiz.sub})[0];
+  var re=quiz.sub==="re",nm=re?"다시 풀기":SUBJ.filter(function(x){return x.k===quiz.sub})[0].nm,total=quiz.qs.length;
   if(quiz.done){
-    fill(body,[h("div",{"class":"result"},h("h2",{text:sb.nm+" 퀴즈 끝!"}),h("div",{"class":"big",text:quiz.score+" / "+quiz.qs.length}),
-      h("p",{text:quiz.gained>0?"별 "+quiz.gained+"개를 받았어요.":quiz.score>=3?"오늘 받을 별은 이미 받았어요. 연습도 멋져요!":"괜찮아요. 한 번 더 풀어 볼까요?"}),
-      h("div",{"class":"row"},h("button",{type:"button","class":"btn",text:"한 번 더 풀기",onclick:function(){startQuiz(quiz.sub)}}),
+    var all=quiz.score===total;
+    fill(body,[h("div",{"class":"result"},h("h2",{text:nm+" 퀴즈 끝!"}),h("div",{"class":"big",text:quiz.score+" / "+total}),
+      h("p",{text:quiz.gained>0?"별 "+quiz.gained+"개를 받았어요.":re?(all?"틀렸던 문제를 다 맞혔어요!":"틀린 문제는 다음에 또 나와요."):quiz.score>=3?"오늘 받을 별은 이미 받았어요. 연습도 멋져요!":"괜찮아요. 한 번 더 풀어 볼까요?"}),
+      h("div",{"class":"row"},(re&&!state.miss.length)?null:h("button",{type:"button","class":"btn",text:"한 번 더 풀기",onclick:function(){startQuiz(quiz.sub)}}),
         h("button",{type:"button","class":"btn ghost",text:"다른 과목 고르기",onclick:function(){quiz=null; renderQuiz()}})))]);
     return;
   }
-  var q=quiz.qs[quiz.i],answered=quiz.picked!=null,ok=quiz.picked===q.ans;
-  fill(body,[h("div",{"class":"qhead"},h("span",{text:sb.nm+" · "+(quiz.i+1)+" / "+quiz.qs.length}),
+  var q=quiz.qs[quiz.i],answered=quiz.picked!=null,ok=quiz.picked===q.ans,lang=q.s==="en"?"en":"ko";
+  fill(body,[h("div",{"class":"qhead"},h("span",{text:nm+" · "+(quiz.i+1)+" / "+total}),
       h("button",{type:"button","class":"btn ghost",text:"그만하기",onclick:function(){quiz=null; renderQuiz()}})),
-    h("p",{"class":"qtext",lang:quiz.sub==="en"?"en":"ko",text:q.q}),
+    h("p",{"class":"qtext",lang:lang,text:q.q}),
     h("div",{"class":"opts"},q.ch.map(function(ch){
-      return h("button",{type:"button","class":"opt"+(answered&&ch===q.ans?" right":answered&&ch===quiz.picked?" wrong":""),disabled:answered,lang:quiz.sub==="en"?"en":"ko",text:ch,onclick:function(){pickAnswer(ch)}});
-    }).reduce(function(f,n){f.appendChild(n); return f},document.createDocumentFragment())),
+      return h("button",{type:"button","class":"opt"+(answered&&ch===q.ans?" right":answered&&ch===quiz.picked?" wrong":""),disabled:answered,lang:lang,text:ch,onclick:function(){pickAnswer(ch)}});
+    }).reduce(frag,document.createDocumentFragment())),
     h("div",{"class":"qfoot"},h("p",{"class":answered?(ok?"ok":"no"):"",text:!answered?"":ok?"정답이에요!":"아쉬워요. 정답은 초록색 칸이에요."}),
-      answered?h("button",{type:"button","class":"btn",id:"qNext",text:quiz.i<quiz.qs.length-1?"다음 문제":"결과 보기",onclick:nextQ}):null)]);
-  var nx=$("qNext"); if(nx) nx.focus();
+      answered?h("button",{type:"button","class":"btn",id:"qNext",text:quiz.i<total-1?"다음 문제":"결과 보기",onclick:nextQ}):null)]);
+  var nx=$("qNext"); if(nx&&view==="quiz") nx.focus();
+}
+
+/* ---------- books ---------- */
+var bkSel=null,bkArmed=false,SPINE=["#E4572E","#D98E04","#3D8FD1","#2E9E6B","#8E6BD6","#D9578D","#2F6F8F","#B5483F"];
+function hashOf(t){var n=0,i; for(i=0;i<t.length;i++) n=(n*31+t.charCodeAt(i))%100003; return n}
+function addBook(title,kind){
+  title=title.trim().slice(0,60); if(!title) return;
+  var d=ensureDay(today()),fBefore=friendCount(); d.b=(+d.b||0)+1;
+  state.books.push({id:uid(),t:title,k:kind==="en"?"en":"ko",d:today()}); if(state.books.length>500) state.books.shift();
+  recompute(today()); prune();
+  cheerUp(fBefore,d.b<=2?"책장에 한 권 꽂았어요! 별 2개":"책장에 한 권 꽂았어요!",state.books.length%5===0);
+  save(); render();
+}
+function removeBook(id){
+  var b=state.books.filter(function(x){return x.id===id})[0]; if(!b) return;
+  state.books=state.books.filter(function(x){return x.id!==id});
+  if(b.d===today()&&state.days[b.d]&&+state.days[b.d].b>0){state.days[b.d].b--; recompute(b.d)}
+  bkSel=null; bkArmed=false; save(); render();
+}
+function renderBooks(){
+  $("bkHead").textContent=state.cfg.name+"의 책장"; $("bkCount").textContent=state.books.length?"지금까지 "+state.books.length+"권":"";
+  var out=[],info=$("bkInfo"),sel=null;
+  state.books.forEach(function(b,i){
+    var hs=hashOf(b.t),w=30+(hs>>3)%14,on=b.id===bkSel; if(on) sel=b;
+    function pick(){bkSel=on?null:b.id; bkArmed=false; renderBooks()}
+    out.push(h("div",{"class":"slot"},h("div",{"class":"spine"+(b.k==="en"?" en":"")+(on?" sel":""),role:"button",tabindex:"0",lang:b.k,"aria-label":b.t,
+      style:"background:"+SPINE[hs%SPINE.length]+";width:"+w+"px;line-height:"+w+"px;height:"+(104+hs%48)+"px",text:b.t,
+      onclick:pick,onkeydown:function(ev){ if(ev.key==="Enter"||ev.key===" "){ev.preventDefault(); pick()} }})));
+    if((i+1)%5===0) out.push(h("div",{"class":"slot deco","aria-hidden":"true",text:["🪴","🌵","🏺","🧸","🌷","🕯️"][Math.floor(i/5)%6]}));
+  });
+  if(!out.length) out.push(h("p",{"class":"shelf-empty",text:"아직 빈 책장이에요. 첫 책을 꽂아 볼까요?"}));
+  fill($("bkShelf"),out);
+  info.hidden=!sel;
+  if(sel) fill(info,[h("span",{text:"《"+sel.t+"》 · "+(sel.k==="en"?"영어 책":"한글 책")+(sel.d?" · "+(+sel.d.slice(5,7))+"월 "+(+sel.d.slice(8))+"일에 읽었어요":"")}),
+    h("button",{type:"button","class":"btn "+(bkArmed?"warn":"ghost"),text:bkArmed?"정말 뺄까요":"책장에서 빼기",onclick:function(){ if(bkArmed) removeBook(sel.id); else {bkArmed=true; renderBooks()} }})]);
+}
+
+/* ---------- badges ---------- */
+function countDays(f){var n=0; Object.keys(state.days).forEach(function(k){ if(f(state.days[k])) n++ }); return n}
+function fullWeeks(){var n=0; Object.keys(state.weeks).forEach(function(k){ if(state.weeks[k].full) n++ }); return n}
+var BADGES=[
+  {id:"s1",e:"🌟",n:"첫 별",d:"별을 처음 받기",g:1,v:earned},
+  {id:"s100",e:"💫",n:"별 백 개",d:"별 100개 모으기",g:100,v:earned},
+  {id:"s300",e:"🌠",n:"별 부자",d:"별 300개 모으기",g:300,v:earned},
+  {id:"s1000",e:"🌌",n:"은하수",d:"별 1000개 모으기",g:1000,v:earned},
+  {id:"p1",e:"🏅",n:"완벽한 하루",d:"하루 할 일을 전부 하기",g:1,v:function(){return countDays(function(d){return d.pf})}},
+  {id:"p10",e:"🏆",n:"완벽한 열흘",d:"완벽한 하루 10번",g:10,v:function(){return countDays(function(d){return d.pf})}},
+  {id:"st7",e:"🔥",n:"일주일 연속",d:"7일 연속으로 하기",g:7,v:streak},
+  {id:"st30",e:"🌋",n:"한 달 연속",d:"30일 연속으로 하기",g:30,v:streak},
+  {id:"j7",e:"🤸",n:"줄넘기 일주일",d:"줄넘기 7일 연속",g:7,v:jumpStreak},
+  {id:"j30",e:"🥇",n:"줄넘기 한 달",d:"줄넘기 30일 연속",g:30,v:jumpStreak},
+  {id:"b5",e:"📕",n:"책벌레",d:"책 5권 읽기",g:5,v:function(){return state.books.length}},
+  {id:"b20",e:"📚",n:"책장 가득",d:"책 20권 읽기",g:20,v:function(){return state.books.length}},
+  {id:"b50",e:"🏛️",n:"꼬마 도서관",d:"책 50권 읽기",g:50,v:function(){return state.books.length}},
+  {id:"q5",e:"🎯",n:"퀴즈 명사수",d:"퀴즈 만점 5번",g:5,v:function(){return state.pq||0}},
+  {id:"q20",e:"🧠",n:"퀴즈 박사",d:"퀴즈 만점 20번",g:20,v:function(){return state.pq||0}},
+  {id:"hw1",e:"✏️",n:"숙제 끝",d:"한 주 숙제를 전부 하기",g:1,v:fullWeeks},
+  {id:"hw4",e:"🎓",n:"숙제 대장",d:"숙제를 전부 한 주 4번",g:4,v:fullWeeks},
+  {id:"pv20",e:"📜",n:"속담 꼬마 박사",d:"속담 20개 배우기",g:20,v:function(){return countDays(function(d){return d.p})}}];
+function checkBadges(){
+  var got=[]; BADGES.forEach(function(b){ if(!state.badges[b.id]&&b.v()>=b.g){state.badges[b.id]=today(); got.push(b)} });
+  if(got.length) setTimeout(function(){toast("새 배지를 받았어요: "+got.map(function(b){return b.e+" "+b.n}).join(", ")); confetti(140); chime(true)},1400);
+}
+function renderBadges(){
+  var n=0;
+  fill($("bds"),BADGES.map(function(b){
+    var at=state.badges[b.id],v=Math.min(b.g,b.v()); if(at) n++;
+    return h("div",{"class":"bd "+(at?"got":"lock")},h("span",{"class":"e","aria-hidden":"true",text:b.e}),h("span",{"class":"n",text:b.n}),
+      h("span",{"class":"d",text:at?(+at.slice(5,7))+"월 "+(+at.slice(8))+"일에 받았어요":b.d+(b.g>1?" ("+v+" / "+b.g+")":"")}));
+  }));
+  $("bdCount").textContent=n+" / "+BADGES.length+"개";
 }
 
 function toggle(taskId){
-  var k=today(), d=ensureDay(k), before=d.r.slice(), fBefore=friendCount(), on=!d.done[taskId];
+  var k=today(), d=ensureDay(k), before=d.r.slice(), pfBefore=!!d.pf, fBefore=friendCount(), on=!d.done[taskId];
   if(on) d.done[taskId]=true; else delete d.done[taskId];
   recompute(k); prune();
-  var msg=null,big=false;
   if(on){
+    var msg=null,big=false;
     ROUTINES.forEach(function(r,i){ if(d.r[i]&&!before[i]) msg=r.nm+" 끝! 별 2개 더 받았어요" });
-    if(d.r[0]&&d.r[1]&&d.r[2]&&!(before[0]&&before[1]&&before[2])){msg="오늘 할 일을 전부 해냈어요! 별 3개 더"; big=true}
+    if(d.pf&&!pfBefore){msg="오늘 할 일을 전부 해냈어요! 별 3개 더"; big=true}
     cheerUp(fBefore,msg,big);
   }
   save(); render(on?taskId:null);
@@ -710,21 +1060,21 @@ function render(popId){
 
   var d=dayRec(today());
   fill($("tabs"),ROUTINES.map(function(r){
-    var ts=state.cfg.tasks[r.k],n=ts.filter(function(t){return d.done[t.id]}).length,full=ts.length>0&&n===ts.length;
+    var ts=tasksOn(r.k,now.getDay()),n=ts.filter(function(t){return d.done[t.id]}).length,full=ts.length>0&&n===ts.length;
     return h("button",{type:"button",role:"tab","aria-selected":String(sel===r.k),"class":"tab"+(full?" full":""),onclick:function(){sel=r.k; render()}},
       h("span",{"class":"nm"},r.nm, r.k===ph?h("span",{"class":"now",text:"지금"}):null),
-      h("span",{"class":"ct",text:full?"다 했어요":n+" / "+ts.length}));
+      h("span",{"class":"ct",text:!ts.length?"쉬는 날":full?"다 했어요":n+" / "+ts.length}));
   }));
-  var ts=state.cfg.tasks[sel],done=ts.filter(function(t){return d.done[t.id]}).length;
+  var ts=tasksOn(sel,now.getDay()),done=ts.filter(function(t){return d.done[t.id]}).length;
   $("barFill").style.width=(ts.length?Math.round(done/ts.length*100):0)+"%";
   fill($("tasks"),ts.length?ts.map(function(t){
     var on=!!d.done[t.id];
     return h("li",null,h("button",{type:"button","class":"task"+(popId===t.id?" pop":""),"aria-pressed":String(on),onclick:function(){toggle(t.id)}},
       h("span",{"class":"em","aria-hidden":"true",text:t.e}),h("span",{"class":"tx",text:t.t}),h("span",{"class":"ck","aria-hidden":"true",text:"★"})));
-  }):[h("li",null,h("p",{"class":"empty",text:"아직 할 일이 없어요. 부모님 메뉴에서 넣어 주세요."}))]);
+  }):[h("li",null,h("p",{"class":"empty",text:"오늘은 이 시간에 할 일이 없어요. 푹 쉬어요!"}))]);
   var cheer=$("cheer"); cheer.hidden=!(ts.length&&done===ts.length); cheer.textContent="전부 해냈어요! 정말 멋져요.";
 
-  renderWeather(); renderWeek(); renderFriends(); renderShop(); renderNav(); renderHw(); renderJump(); renderQuiz();
+  renderWeather(); renderWeek(); renderFriends(); renderShop(); renderNav(); renderHw(); renderJump(); renderProverb(); renderBooks(); renderBadges(); renderPup(); renderQuiz();
 }
 var weather=null;
 try{var wraw=localStorage.getItem(LS+"-wx"); if(wraw) weather=JSON.parse(wraw)}catch(e){}
@@ -757,10 +1107,10 @@ function renderWeather(){
 var view="today";
 function renderNav(){
   var w=weekRec(weekKey()),tot=0,dn=0; state.cfg.hw.forEach(function(x){tot+=x.n; dn+=hwCount(w,x)});
-  fill($("nav"),[["today","오늘 할 일",""],["hw","숙제",tot?dn+" / "+tot:""],["quiz","퀴즈",""]].map(function(v){
-    return h("button",{type:"button","aria-current":view===v[0]?"page":null,onclick:function(){view=v[0]; if(v[0]!=="quiz"&&quiz&&quiz.done) quiz=null; render()}},v[1],v[2]?h("small",{text:v[2]}):null);
+  fill($("nav"),[["today","오늘 할 일",""],["hw","숙제",tot?dn+" / "+tot:""],["books","책장",state.books.length?state.books.length+"권":""],["quiz","퀴즈",""],["pup",state.pup?state.pup.name:"강아지",""],["badges","배지",Object.keys(state.badges).length?Object.keys(state.badges).length+"개":""]].map(function(v){
+    return h("button",{type:"button","aria-current":view===v[0]?"page":null,onclick:function(){view=v[0]; pupSay=null; pupArmed=null; if(v[0]!=="quiz"&&quiz&&quiz.done) quiz=null; render()}},v[1],v[2]?h("small",{text:v[2]}):null);
   }));
-  $("viewToday").hidden=view!=="today"; $("viewHw").hidden=view!=="hw"; $("viewQuiz").hidden=view!=="quiz";
+  $("viewToday").hidden=view!=="today"; $("viewHw").hidden=view!=="hw"; $("viewQuiz").hidden=view!=="quiz"; $("viewBooks").hidden=view!=="books"; $("viewPup").hidden=view!=="pup"; $("viewBadges").hidden=view!=="badges";
 }
 function renderHw(){
   var w=weekRec(weekKey()),tot=0,dn=0; state.cfg.hw.forEach(function(x){tot+=x.n; dn+=hwCount(w,x)});
@@ -810,6 +1160,8 @@ $("openParent").addEventListener("click",function(){
   $("gateQ").textContent=a+" × "+b+" 는 얼마일까요?"; $("gateAns").value=""; $("gate").showModal(); $("gateAns").focus();
 });
 $("jpBtn").addEventListener("click",toggleJump);
+$("pvBtn").addEventListener("click",revealProverb);
+$("bkForm").addEventListener("submit",function(ev){ev.preventDefault(); var t=$("bkTitle"); if(!t.value.trim()){t.focus(); return} addBook(t.value,$("bkKind").value); t.value=""});
 $("gateClose").addEventListener("click",function(){$("gate").close()});
 $("gateForm").addEventListener("submit",function(ev){
   ev.preventDefault();
@@ -821,6 +1173,25 @@ function field(label,id,value,cls,onchange,type){
   return h("div",{"class":"row"},h("label",{"for":id,text:label}),h("input",{id:id,"class":"in "+cls,value:value,type:type||"text",onchange:function(){onchange(this.value)}}));
 }
 var armed=null;
+function weekReview(){
+  var first=Object.keys(state.days).sort()[0],n=0,rd=[0,0,0],rf=[0,0,0],miss={},jump=0,i,from="",sec=h("section",{"class":"review"},h("h3",{text:"지난 7일 돌아보기"}));
+  for(i=1;i<=7;i++){
+    var dt=new Date(); dt.setDate(dt.getDate()-i); var k=keyOf(dt); from=k; if(!first||k<first) continue; n++;
+    var d=dayRec(k); if(+d.j>0) jump++;
+    ROUTINES.forEach(function(ro,j){var ts=tasksOn(ro.k,dt.getDay()); if(!ts.length) return; rd[j]++;
+      if(ts.every(function(t){return d.done[t.id]})) rf[j]++;
+      ts.forEach(function(t){ if(!d.done[t.id]) miss[t.id]=(miss[t.id]||0)+1 })});
+  }
+  if(!n){sec.appendChild(h("p",{"class":"hint",text:"아직 지난 기록이 없어요. 내일부터 여기에 보여요."})); return sec}
+  var names={}; ROUTINES.forEach(function(ro){state.cfg.tasks[ro.k].forEach(function(t){names[t.id]=t.t})});
+  var top=Object.keys(miss).filter(function(id){return names[id]}).sort(function(a,b){return miss[b]-miss[a]}).slice(0,3);
+  var books=state.books.filter(function(b){return b.d>=from&&b.d<today()}).length;
+  sec.appendChild(h("p",{"class":"hint",text:"어제까지 기록이 있는 "+n+"일을 봤어요."}));
+  sec.appendChild(h("p",{text:"다 한 날: "+ROUTINES.map(function(ro,j){return ro.nm+" "+rf[j]+" / "+rd[j]+"일"}).join(" · ")}));
+  sec.appendChild(h("p",{text:"줄넘기 "+jump+" / "+n+"일 · 읽은 책 "+books+"권"}));
+  sec.appendChild(h("p",{text:top.length?"자주 빠뜨린 할 일: "+top.map(function(id){return names[id]+" ("+miss[id]+"번)"}).join(", "):"빠뜨린 할 일이 없어요."}));
+  return sec;
+}
 function twoStep(key,label,sure,fn,cls){
   return h("button",{type:"button","class":"btn "+(armed===key?"warn":(cls||"ghost")),text:armed===key?sure:label,onclick:function(){ if(armed===key){armed=null; fn()} else {armed=key} renderParent()}});
 }
@@ -828,6 +1199,7 @@ function renderParent(){
   var body=$("parentBody"),kids=[];
   kids.push(h("header",null,h("h2",{text:"부모님 메뉴"}),h("button",{"class":"x",type:"button","aria-label":"닫기",text:"✕",onclick:function(){armed=null; $("parent").close()}})));
 
+  kids.push(weekReview());
   var wait=state.red.filter(function(x){return x.st==="wait"});
   kids.push(h("section",null,h("h3",{text:"아이가 바꾼 쿠폰"}),
     wait.length?h("div",null,wait.map(function(x){return h("div",{"class":"row"},
@@ -851,13 +1223,21 @@ function renderParent(){
         [10,15,20,30].forEach(function(n){var o=h("option",{value:n,text:n+"개"}); if(n===state.cfg.unlockEvery) o.selected=true; s.appendChild(o)}); return s})())));
 
   ROUTINES.forEach(function(r){
-    var list=state.cfg.tasks[r.k],sec=h("section",null,h("h3",{text:r.nm+" 할 일"}));
+    var list=state.cfg.tasks[r.k],sec=h("section",null,h("h3",{text:r.nm+" 할 일"}),h("p",{"class":"hint",text:"아래 요일 동그라미를 눌러 그 할 일이 나오는 요일을 골라요."}));
     list.forEach(function(t,i){
       sec.appendChild(h("div",{"class":"row"},
         h("input",{"class":"in e",value:t.e,"aria-label":"그림",id:"te-"+t.id,onchange:function(){t.e=this.value.trim()||"⭐"; commit()}}),
         h("input",{"class":"in t",value:t.t,"aria-label":"할 일",id:"tt-"+t.id,onchange:function(){t.t=this.value.trim(); commit()}}),
         h("button",{type:"button","class":"x","aria-label":"위로",text:"↑",disabled:i===0,onclick:function(){list.splice(i-1,0,list.splice(i,1)[0]); commit(); renderParent()}}),
         h("button",{type:"button","class":"x","aria-label":"지우기",text:"✕",onclick:function(){list.splice(i,1); recompute(today()); commit(); renderParent()}})));
+      sec.appendChild(h("div",{"class":"row chips"},[1,2,3,4,5,6,0].map(function(wd){
+        var on=!t.w||t.w.indexOf(wd)>=0;
+        return h("button",{type:"button","class":"dchip","aria-pressed":String(on),"aria-label":t.t+" "+DAYS_KO[wd]+"요일",text:DAYS_KO[wd],onclick:function(){
+          var cur=t.w?t.w.slice():[0,1,2,3,4,5,6],ix=cur.indexOf(wd);
+          if(ix>=0){ if(cur.length===1) return; cur.splice(ix,1) } else cur.push(wd);
+          if(cur.length===7) delete t.w; else t.w=cur.sort();
+          recompute(today()); commit(); renderParent()}});
+      }).reduce(frag,document.createDocumentFragment())));
     });
     sec.appendChild(h("button",{type:"button","class":"btn ghost",text:"할 일 더하기",onclick:function(){var t=T("⭐","새 할 일"); list.push(t); recompute(today()); commit(); renderParent(); var el=$("tt-"+t.id); if(el){el.focus(); el.select()}}}));
     kids.push(sec);
@@ -885,10 +1265,10 @@ function renderParent(){
   rs.appendChild(h("button",{type:"button","class":"btn ghost",text:"선물 더하기",onclick:function(){var rw={id:uid(),e:"🎁",t:"새 선물",c:20}; state.cfg.rewards.push(rw); commit(); renderParent(); var el=$("rt-"+rw.id); if(el){el.focus(); el.select()}}}));
   kids.push(rs);
 
-  kids.push(h("section",null,h("h3",{text:"기록 지우기"}),h("p",{"class":"hint",text:"지운 기록은 되돌릴 수 없어요. 할 일과 선물 목록은 그대로 남아요."}),
+  kids.push(h("section",null,h("h3",{text:"기록 지우기"}),h("p",{"class":"hint",text:"지운 기록은 되돌릴 수 없어요. 할 일과 선물 목록, 책장의 책은 그대로 남아요."}),
     h("div",{"class":"row"},
       twoStep("day","오늘 체크만 지우기","정말 오늘 체크를 지울까요",function(){delete state.days[today()]; commit()}),
-      twoStep("all","별과 기록 모두 지우기","정말 모두 지울까요",function(){state.days={}; state.weeks={}; state.banked=0; state.bonus=0; state.spent=0; state.red=[]; commit()}))));
+      twoStep("all","별과 기록 모두 지우기","정말 모두 지울까요",function(){state.days={}; state.weeks={}; state.banked=0; state.bonus=0; state.spent=0; state.red=[]; state.miss=[]; state.badges={}; state.pq=0; commit()}))));
   var box=h("textarea",{id:"pBackup","class":"in t",rows:4,"aria-label":"백업 내용",style:"width:100%;font-size:13px"}),msg=h("p",{"class":"hint",text:""});
   kids.push(h("section",null,h("h3",{text:"백업과 불러오기"}),h("p",{"class":"hint",text:"기록은 이 기기의 브라우저에만 있어요. 가끔 백업 내용을 복사해 메모에 붙여 두면, 기기를 바꾸거나 기록이 지워졌을 때 되살릴 수 있어요."}),
     box,h("div",{"class":"row",style:"margin-top:8px"},
