@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>별 모으는 하루</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: the sky behind the page follows the real time of day (sunrise / daylight / night);
+   one big routine card on the left, the "what I earned" shelf on the right. Single visual world, no light/dark switch. */
+:root{
+  --sky-a:#FFE3CF; --sky-b:#CFE6FF;
+  --ink:#2A2850; --ink-soft:#6B6A8C;
+  --card:#FFFFFF; --card-2:#F4F3FB; --line:#E3E1F2;
+  --accent:#FF7A59; --accent-ink:#FFFFFF;
+  --star:#FFC22E; --star-ink:#4A3200;
+  --done:#2FA872;
+  --font-display:"Jua","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font-body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --r:22px;
+  color-scheme:light;
+}
+:root[data-phase="after"]{
+  --sky-a:#BDE5FF; --sky-b:#E6F7D6;
+  --ink:#15324C; --ink-soft:#557089;
+  --card-2:#EEF6FB; --line:#D5E6F0;
+  --accent:#1479C9;
+}
+:root[data-phase="night"]{
+  --sky-a:#17163F; --sky-b:#3B2B6E;
+  --ink:#F4F1FF; --ink-soft:#B9B3DE;
+  --card:#2A2861; --card-2:#35326F; --line:#48458A;
+  --accent:#B59BFF; --accent-ink:#1B1840;
+  --done:#6FE0A8;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:var(--font-body); font-size:17px; line-height:1.5;
+  background:linear-gradient(180deg,var(--sky-a),var(--sky-b)) fixed var(--sky-b);
+  transition:color .6s;
+}
+:root[data-phase="night"] body{
+  background:
+    radial-gradient(2px 2px at 12% 18%,#fff 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 31% 9%,#fff 50%,transparent 51%),
+    radial-gradient(2px 2px at 57% 22%,#fff 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 78% 12%,#fff 50%,transparent 51%),
+    radial-gradient(2px 2px at 91% 30%,#fff 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 44% 38%,#fff 50%,transparent 51%),
+    linear-gradient(180deg,var(--sky-a),var(--sky-b));
+  background-attachment:fixed; background-color:var(--sky-b);
+}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--font-display);font-weight:400;margin:0;text-wrap:balance}
+
+.wrap{max-width:1320px;margin:0 auto;padding:20px 16px 48px;display:flex;flex-direction:column;gap:18px}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.orb{width:58px;height:58px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 35% 35%,#FFF3B0,#FFC22E 70%);
+  box-shadow:0 0 0 8px rgba(255,194,46,.22)}
+:root[data-phase="night"] .orb{background:radial-gradient(circle at 35% 35%,#fff,#E7E2FF 70%);
+  box-shadow:inset -14px -6px 0 0 #C9C0F5,0 0 0 8px rgba(255,255,255,.08)}
+.hello{flex:1 1 240px;min-width:0}
+.hello h1{font-size:clamp(26px,5vw,36px);line-height:1.15}
+.hello p{margin:2px 0 0;color:var(--ink-soft)}
+.meters{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.meter{background:var(--card);border-radius:18px;padding:8px 16px;display:flex;flex-direction:column;justify-content:center;min-width:92px}
+.meter b{font-family:var(--font-display);font-weight:400;font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
+.meter span{font-size:13px;color:var(--ink-soft)}
+.meter.star{background:var(--star);color:var(--star-ink)}
+.meter.star span{color:var(--star-ink);opacity:.75}
+.gear{border:0;background:var(--card);border-radius:18px;padding:0 16px;min-height:56px;font-size:15px}
+
+.note{background:var(--card);border-radius:var(--r);padding:12px 18px;display:flex;gap:10px;align-items:baseline}
+.note small{font-family:var(--font-display);color:var(--accent);flex:none;font-size:15px}
+.note p{margin:0;overflow-wrap:anywhere}
+
+/* main grid */
+.grid{display:grid;gap:18px;align-items:start;grid-template-columns:minmax(0,1fr);grid-template-areas:"r" "a" "b"}
+.grid>.routine{grid-area:r}.grid>.shelf.a{grid-area:a}.grid>.shelf.b{grid-area:b}
+@media (min-width:760px){.grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"r a" "r b"}}
+@media (min-width:980px){.grid{grid-template-columns:minmax(0,1.2fr) minmax(0,.95fr) minmax(0,.95fr);grid-template-areas:"r a b"}}
+@media (min-width:980px) and (max-height:820px){
+  .wrap{padding-top:12px;gap:12px}.grid{gap:14px}.shelf{gap:14px}.card{padding:14px}
+  .orb{width:44px;height:44px}.note{padding:8px 16px}.task{min-height:58px;padding:9px 12px}.tasks{gap:8px}
+}
+
+/* weather */
+.wx-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px}
+.wx-top h2{margin:0}.wx-top small{color:var(--ink-soft);font-size:13px;text-align:right}
+.wx{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.wx div{background:var(--card-2);border-radius:16px;padding:10px 12px;min-width:0}
+.wx .lb{font-size:13px;color:var(--ink-soft);display:block}
+.wx .big{font-family:var(--font-display);font-size:28px;line-height:1.15;display:block;font-variant-numeric:tabular-nums}
+.wx .sm{font-size:14px;display:block;font-variant-numeric:tabular-nums}
+.wear{margin:10px 0 0;border:2px dashed var(--star);border-radius:14px;padding:8px 12px;font-size:15px}
+.wear b{font-family:var(--font-display);font-weight:400;color:var(--accent)}
+.card{background:var(--card);border-radius:var(--r);padding:18px;min-width:0}
+.card h2{font-size:21px;margin-bottom:10px}
+.shelf{display:flex;flex-direction:column;gap:18px;min-width:0}
+
+/* routine tabs */
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.tab{border:2px solid var(--line);background:var(--card-2);border-radius:16px;padding:10px 8px;text-align:center;min-width:0}
+.tab .nm{font-family:var(--font-display);font-size:17px;display:block}
+.tab .ct{font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.tab[aria-selected="true"]{border-color:var(--accent);background:var(--card)}
+.tab.full{border-color:var(--done)}
+.tab.full .ct{color:var(--done)}
+.tab .now{display:inline-block;font-size:11px;background:var(--accent);color:var(--accent-ink);border-radius:99px;padding:0 7px;margin-left:4px;vertical-align:2px}
+
+.bar{height:14px;border-radius:99px;background:var(--card-2);overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--star);transition:width .35s}
+
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.task{width:100%;display:flex;align-items:center;gap:14px;text-align:left;
+  border:2px solid var(--line);background:var(--card);border-radius:18px;padding:12px 14px;min-height:66px}
+.task .em{font-size:30px;line-height:1;flex:none;width:38px;text-align:center}
+.task .tx{flex:1;min-width:0;font-size:19px;overflow-wrap:anywhere}
+.task .ck{flex:none;width:38px;height:38px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;font-size:20px;color:transparent}
+.task[aria-pressed="true"]{background:var(--card-2);border-color:transparent}
+.task[aria-pressed="true"] .tx{color:var(--ink-soft);text-decoration:line-through}
+.task[aria-pressed="true"] .ck{background:var(--star);border-color:var(--star);color:var(--star-ink)}
+.task.pop .ck{animation:pop .4s}
+@keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.35)}100%{transform:scale(1)}}
+.cheer{margin:14px 0 0;font-family:var(--font-display);font-size:18px;color:var(--done)}
+.rule{margin:12px 0 0;font-size:14px;color:var(--ink-soft)}
+.empty{color:var(--ink-soft);margin:0}
+
+/* week */
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.day{background:var(--card-2);border-radius:14px;padding:8px 2px;text-align:center;border:2px solid transparent}
+.day.today{border-color:var(--accent);background:var(--card)}
+.day b{display:block;font-family:var(--font-display);font-weight:400;font-size:15px}
+.dots{display:flex;justify-content:center;gap:3px;margin-top:6px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--star)}
+.legend{margin:10px 0 0;font-size:13px;color:var(--ink-soft)}
+
+/* friends */
+.friends{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.fr{aspect-ratio:1;border-radius:16px;background:var(--card-2);display:grid;place-items:center;text-align:center;padding:2px;min-width:0}
+.fr .e{font-size:clamp(22px,6vw,30px);line-height:1}
+.fr .n{font-size:11px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.fr.lock .e{opacity:.35;font-family:var(--font-display);font-size:22px}
+.fr.new{animation:pop .5s}
+.sub{margin:0 0 10px;color:var(--ink-soft);font-size:15px}
+
+/* shop */
+.shop{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rw{display:flex;align-items:center;gap:10px;background:var(--card-2);border-radius:16px;padding:10px 12px}
+.rw .em{font-size:26px;flex:none}
+.rw .tx{flex:1;min-width:0;overflow-wrap:anywhere}
+.rw .tx small{display:block;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.btn{border:0;border-radius:14px;padding:10px 14px;background:var(--accent);color:var(--accent-ink);font-family:var(--font-display);font-size:16px;flex:none;min-height:44px}
+.btn[disabled]{background:var(--line);color:var(--ink-soft);cursor:default}
+.btn.ghost{background:transparent;border:2px solid var(--line);color:var(--ink)}
+.btn.warn{background:#D8483C;color:#fff}
+.coupons{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.coupons li{border:2px dashed var(--star);border-radius:14px;padding:8px 12px;font-size:15px;overflow-wrap:anywhere}
+
+.foot{text-align:center;color:var(--ink-soft);font-size:13px;margin:0}
+
+[hidden]{display:none!important}
+:root{--miss:#D8483C}
+:root[data-phase="night"]{--miss:#FF9A8F}
+
+/* page switcher */
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.nav button{border:0;background:var(--card);border-radius:99px;padding:10px 20px;font-family:var(--font-display);font-size:18px;min-height:48px;opacity:.75}
+.nav button[aria-current="page"]{background:var(--accent);color:var(--accent-ink);opacity:1}
+.nav small{font-family:var(--font-body);font-size:13px;margin-left:6px;font-variant-numeric:tabular-nums}
+.solo{max-width:720px;width:100%;margin:0 auto}
+
+/* homework */
+.hw{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.hw li{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:2px solid var(--line);border-radius:18px;padding:12px 14px}
+.hw li.full{background:var(--card-2);border-color:transparent}
+.hw .em{font-size:30px;flex:none;width:38px;text-align:center}
+.hw .tx{flex:1 1 150px;min-width:0;font-size:19px;overflow-wrap:anywhere}
+.hw .tx small{display:block;font-size:14px;color:var(--ink-soft)}
+.bubs{display:flex;gap:6px;flex-wrap:wrap}
+.bub{width:42px;height:42px;border-radius:50%;border:3px solid var(--line);background:transparent;color:transparent;font-size:20px;padding:0}
+.bub[aria-pressed="true"]{background:var(--star);border-color:var(--star);color:var(--star-ink)}
+
+/* quiz */
+.subs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.subs{grid-template-columns:minmax(0,1fr)}}
+.sub-btn{border:2px solid var(--line);background:var(--card-2);border-radius:20px;padding:18px 12px;text-align:center}
+.sub-btn .e{font-size:38px;display:block;line-height:1.2}
+.sub-btn .nm{font-family:var(--font-display);font-size:22px;display:block}
+.sub-btn .st{font-size:14px;color:var(--ink-soft)}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;color:var(--ink-soft)}
+.qtext{font-size:clamp(21px,4.5vw,27px);line-height:1.4;margin:6px 0 18px;overflow-wrap:anywhere}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.opts{grid-template-columns:minmax(0,1fr)}}
+.opt{border:2px solid var(--line);background:var(--card);border-radius:18px;padding:14px;font-size:20px;min-height:64px;text-align:center;overflow-wrap:anywhere}
+.opt.right{border-color:var(--done);background:var(--card-2);box-shadow:inset 0 0 0 2px var(--done)}
+.opt.wrong{border-color:var(--miss);color:var(--miss)}
+.opt[disabled]{cursor:default}
+.qfoot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px;min-height:48px}
+.qfoot p{margin:0;font-family:var(--font-display);font-size:19px}
+.qfoot p.ok{color:var(--done)} .qfoot p.no{color:var(--miss)}
+.result{text-align:center;padding:10px 0}
+.result .big{font-family:var(--font-display);font-size:54px;line-height:1.1;font-variant-numeric:tabular-nums}
+.result p{margin:6px 0 16px}
+.result .row{justify-content:center}
+
+/* toast + fx */
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:50;
+  background:var(--ink);color:var(--sky-b);font-family:var(--font-display);font-size:18px;border-radius:99px;padding:12px 22px;
+  max-width:calc(100% - 32px);text-align:center;transition:opacity .25s,transform .25s}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* dialogs */
+dialog{border:0;border-radius:24px;padding:0;background:var(--card);color:var(--ink);width:min(640px,calc(100% - 24px));max-height:calc(100% - 24px)}
+dialog::backdrop{background:rgba(10,10,40,.55)}
+.dlg{padding:20px;display:flex;flex-direction:column;gap:18px}
+.dlg header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dlg h2{font-size:24px}
+.dlg h3{font-size:18px;margin-bottom:8px}
+.dlg section{border-top:2px solid var(--line);padding-top:14px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.row label{font-size:14px;color:var(--ink-soft);flex:0 0 100%}
+.in{border:2px solid var(--line);background:var(--card-2);border-radius:12px;padding:9px 10px;min-width:0}
+.in.e{width:56px;text-align:center;flex:none}
+.in.t{flex:1 1 140px}
+.in.c{width:76px;flex:none;text-align:right}
+.x{border:0;background:transparent;font-size:20px;width:40px;height:40px;border-radius:10px;flex:none}
+.hint{font-size:14px;color:var(--ink-soft);margin:0 0 8px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="orb" aria-hidden="true"></div>
+    <div class="hello"><h1 id="hi"></h1><p id="date"></p></div>
+    <div class="meters">
+      <div class="meter star"><b id="mStar">0</b><span>모은 별</span></div>
+      <div class="meter"><b id="mStreak">0</b><span>일 연속</span></div>
+      <button class="gear" id="openParent" type="button">부모님 메뉴</button>
+    </div>
+  </header>
+  <div class="note" id="noteBox"><small>오늘의 한마디</small><p id="note"></p></div>
+
+  <nav class="nav" id="nav" aria-label="화면 고르기"></nav>
+
+  <section class="card solo" id="viewHw" hidden>
+    <h2>이번 주 숙제</h2>
+    <p class="sub" id="hwSub"></p>
+    <div class="bar" aria-hidden="true"><i id="hwFill" style="width:0"></i></div>
+    <ul class="hw" id="hwList"></ul>
+    <p class="rule">동그라미 하나에 별 1개 · 이번 주 숙제를 전부 하면 별 5개 더 · 월요일마다 새로 시작해요</p>
+  </section>
+
+  <section class="card solo" id="viewQuiz" hidden>
+    <div id="quizBody"></div>
+  </section>
+
+  <main class="grid" id="viewToday">
+    <section class="card routine" aria-label="오늘 할 일">
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="bar" aria-hidden="true"><i id="barFill" style="width:0"></i></div>
+      <ul class="tasks" id="tasks"></ul>
+      <p class="cheer" id="cheer" hidden></p>
+      <p class="rule">하나 하면 별 1개 · 한 묶음을 다 하면 별 2개 더 · 세 묶음을 다 하면 별 3개 더</p>
+    </section>
+
+    <div class="shelf a">
+      <section class="card" id="wxCard" hidden>
+        <div class="wx-top"><h2>날씨</h2><small id="wxAt"></small></div>
+        <div class="wx" id="wx"></div>
+        <p class="wear" id="wear"></p>
+      </section>
+      <section class="card"><h2>이번 주</h2><div class="week" id="week"></div>
+        <p class="legend">점 세 개는 아침 · 학교 다녀와서 · 자기 전이에요. 다 하면 노랗게 켜져요.</p></section>
+    </div>
+    <div class="shelf b">
+      <section class="card"><h2>별 친구들</h2><p class="sub" id="frSub"></p>
+        <div class="bar" aria-hidden="true"><i id="frFill" style="width:0"></i></div>
+        <div class="friends" id="friends"></div></section>
+      <section class="card"><h2>별 가게</h2><ul class="shop" id="shop"></ul><ul class="coupons" id="coupons"></ul></section>
+    </div>
+  </main>
+  <p class="foot" id="sync"></p>
+</div>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="gate"><form class="dlg" id="gateForm">
+  <header><h2>부모님 확인</h2><button class="x" type="button" id="gateClose" aria-label="닫기">✕</button></header>
+  <div class="row"><label for="gateAns" id="gateQ"></label>
+    <input class="in t" id="gateAns" inputmode="numeric" autocomplete="off">
+    <button class="btn" type="submit">확인</button></div>
+</form></dialog>
+
+<dialog id="parent"><div class="dlg" id="parentBody"></div></dialog>
+
+<script>
+(function(){
+"use strict";
+var ROUTINES=[{k:"morning",nm:"아침"},{k:"after",nm:"학교 다녀와서"},{k:"night",nm:"자기 전"}];
+var FRIENDS=[["🐰","토토"],["🐥","삐약이"],["🐱","나비"],["🐶","콩이"],["🦊","여울이"],["🐼","동글이"],["🐨","코코"],["🦁","으뜸이"],["🐯","호야"],["🐸","폴짝이"],
+  ["🐧","뒤뚱이"],["🦉","부엉이"],["🐢","느긋이"],["🐬","물보라"],["🦄","무지개"],["🐳","푸푸"],["🦋","팔랑이"],["🐝","붕붕이"],["🦕","초록이"],["🐉","반짝이"]];
+var DAYS_KO=["일","월","화","수","목","금","토"];
+
+function uid(){return Math.random().toString(36).slice(2,9)}
+function T(e,t){return {id:uid(),e:e,t:t}}
+var SUBJ=[{k:"en",nm:"영어",e:"🔤"},{k:"ko",nm:"국어",e:"📚"},{k:"ma",nm:"수학",e:"🔢"}];
+/* quiz banks: [question, correct answer, wrong, wrong, wrong] */
+var BANK_EN=[
+["Which word means the same as \"enormous\"?","huge","tiny","quiet","quick"],
+["Which word is the opposite of \"ancient\"?","modern","old","dusty","famous"],
+["If you are \"exhausted\", you are…","very tired","very hungry","very happy","very late"],
+["If you are \"curious\", you…","want to know more","want to go to sleep","feel a little sick","are very strong"],
+["Which word means the same as \"furious\"?","very angry","very funny","very fast","very sleepy"],
+["To \"glance\" at something means to…","look at it quickly","throw it away","break it","draw it"],
+["To \"whisper\" means to…","speak very quietly","shout loudly","sing a song","run away"],
+["Which word means the same as \"brave\"?","courageous","careless","clumsy","cranky"],
+["Which word means the same as \"delicious\"?","tasty","salty","messy","chilly"],
+["Which word is the opposite of \"generous\"?","selfish","gentle","polite","cheerful"],
+["What is the past tense of \"catch\"?","caught","catched","cought","catch"],
+["What is the past tense of \"bring\"?","brought","bringed","brang","brung"],
+["What is the past tense of \"teach\"?","taught","teached","tought","teacht"],
+["What is the past tense of \"fly\"?","flew","flied","flown","flyed"],
+["What is the past tense of \"write\"?","wrote","writed","written","writ"],
+["What is the plural of \"mouse\"?","mice","mouses","mices","mouse's"],
+["What is the plural of \"leaf\"?","leaves","leafs","leafes","leavs"],
+["What is the plural of \"child\"?","children","childs","childrens","childes"],
+["Choose the best word: \"She ___ to school every day.\"","walks","walk","walking","walken"],
+["Choose the best word: \"They ___ playing soccer right now.\"","are","is","am","be"],
+["Choose the best word: \"An elephant is ___ than a mouse.\"","bigger","big","biggest","more big"],
+["Choose the best word: \"This is the ___ book I have ever read.\"","best","better","good","goodest"],
+["Choose the best word: \"The cat jumped ___ the table.\"","onto","at","of","between"],
+["Choose the best word: \"We eat lunch ___ noon.\"","at","in","on","to"],
+["Choose the best word: \"___ going to the park after school.\"","They're","Their","There","Theirs"],
+["Choose the best word: \"I can ___ the ocean from my window.\"","see","sea","saw","seen"],
+["Choose the best word: \"The puppy was so ___ that it hid under the bed.\"","frightened","delighted","proud","hungry"],
+["Choose the best word: \"It was raining, ___ we stayed inside.\"","so","but","because","or"],
+["Which sentence is correct?","He doesn't like carrots.","He don't like carrots.","He not like carrots.","He doesn't likes carrots."],
+["Which sentence is correct?","There are two books on the desk.","There is two books on the desk.","There are two book on the desk.","There be two books on the desk."],
+["\"Unhappy\" means…","not happy","very happy","happy again","a little happy"],
+["To \"reread\" a book means to…","read it again","read it fast","stop reading it","read it aloud"],
+["What is the short form of \"will not\"?","won't","willn't","wo'nt","wont"],
+["Which word is a compound word?","sunflower","yellow","garden","beautiful"],
+["Which word rhymes with \"night\"?","kite","neat","nine","note"],
+["Which word is an adjective (a describing word)?","sparkly","quickly","jump","happiness"],
+["Which word is a verb (an action word)?","scramble","purple","tiny","kitchen"],
+["\"It's a piece of cake\" means…","it is very easy","it is very sweet","it is time to eat","it is too small"],
+["\"It's raining cats and dogs\" means…","it is raining very hard","pets are outside","the weather is sunny","it is very windy"],
+["Which word belongs in the group: apple, pear, peach, ___?","plum","carrot","bread","cheese"]];
+var BANK_KO=[
+["바르게 쓴 낱말은 무엇일까요?","설거지","설겆이","설거찌","설걷이"],
+["바르게 쓴 낱말은 무엇일까요?","떡볶이","떡볶기","떡뽁이","떡복이"],
+["바르게 쓴 낱말은 무엇일까요?","찌개","찌게","찌계","치개"],
+["바르게 쓴 낱말은 무엇일까요?","베개","배게","베게","배개"],
+["바르게 쓴 낱말은 무엇일까요?","숟가락","숫가락","숟까락","수까락"],
+["바르게 쓴 낱말은 무엇일까요?","깨끗이","깨끗히","깨끄시","깨끝이"],
+["빈칸에 알맞은 말은? \"오늘이 몇 월 ( )이야?\"","며칠","몇일","몇칠","며칟"],
+["빈칸에 알맞은 말은? \"( ) 기분이 좋아.\"","왠지","웬지","왼지","웬치"],
+["빈칸에 알맞은 말은? \"감기가 다 ( ).\"","나았다","낳았다","났았다","나앗다"],
+["빈칸에 알맞은 말은? \"오늘은 숙제를 ( ) 했어요.\"","안","않","앉","않이"],
+["빈칸에 알맞은 말은? \"신발 끈을 꽉 ( ).\"","맸다","멨다","맷다","멧다"],
+["빈칸에 알맞은 말은? \"우산을 버스에 두고 내려서 ( ).\"","잃어버렸다","잊어버렸다","일어버렸다","이러버렸다"],
+["빈칸에 알맞은 말은? \"선생님께서 우리에게 수학을 ( ).\"","가르치신다","가리키신다","가르키신다","가리치신다"],
+["빈칸에 알맞은 말은? \"우리는 쌍둥이지만 성격이 ( ).\"","다르다","틀리다","달르다","틀르다"],
+["빈칸에 알맞은 말은? \"할머니께서 진지를 ( ).\"","잡수신다","먹는다","먹어","먹었어"],
+["빈칸에 알맞은 말은? \"어제 친구와 재미있게 ( ).\"","놀았다","논다","놀 것이다","놀자"],
+["\"높다\"의 반대말은 무엇일까요?","낮다","크다","길다","넓다"],
+["\"무겁다\"의 반대말은 무엇일까요?","가볍다","작다","얇다","짧다"],
+["\"두껍다\"의 반대말은 무엇일까요?","얇다","좁다","낮다","가늘다"],
+["\"넓다\"의 반대말은 무엇일까요?","좁다","짧다","얕다","작다"],
+["\"기쁘다\"와 뜻이 비슷한 말은 무엇일까요?","즐겁다","슬프다","무섭다","심심하다"],
+["\"깨끗하다\"와 뜻이 비슷한 말은 무엇일까요?","말끔하다","지저분하다","시끄럽다","어둡다"],
+["빈칸에 알맞은 흉내 내는 말은? \"토끼가 ( ) 뛰어요.\"","깡충깡충","엉금엉금","뒤뚱뒤뚱","살금살금"],
+["빈칸에 알맞은 흉내 내는 말은? \"별이 ( ) 빛나요.\"","반짝반짝","주룩주룩","쿵쾅쿵쾅","꼬르륵"],
+["빈칸에 알맞은 흉내 내는 말은? \"시냇물이 ( ) 흘러요.\"","졸졸","펄펄","쨍쨍","활활"],
+["빈칸에 알맞은 흉내 내는 말은? \"아기가 ( ) 걸어요.\"","아장아장","성큼성큼","펄럭펄럭","보글보글"],
+["빈칸에 알맞은 세는 말은? \"연필 한 ( )\"","자루","켤레","그루","송이"],
+["빈칸에 알맞은 세는 말은? \"신발 한 ( )\"","켤레","자루","권","마리"],
+["빈칸에 알맞은 세는 말은? \"나무 한 ( )\"","그루","송이","자루","장"],
+["빈칸에 알맞은 세는 말은? \"장미 한 ( )\"","송이","그루","권","켤레"],
+["빈칸에 알맞은 세는 말은? \"동화책 한 ( )\"","권","장","자루","대"],
+["속담을 완성해 보세요. \"가는 말이 고와야 ( )\"","오는 말이 곱다","가는 길이 멀다","말이 달린다","소가 웃는다"],
+["속담을 완성해 보세요. \"티끌 모아 ( )\"","태산","바다","먼지","하늘"],
+["속담을 완성해 보세요. \"원숭이도 나무에서 ( )\"","떨어진다","올라간다","잠을 잔다","노래한다"],
+["속담을 완성해 보세요. \"소 잃고 ( ) 고친다\"","외양간","대문","울타리","지붕"],
+["묻는 문장의 끝에 쓰는 문장 부호는 무엇일까요?","물음표 ( ? )","마침표 ( . )","느낌표 ( ! )","쉼표 ( , )"],
+["\"꽃이\"를 소리 나는 대로 쓰면 무엇일까요?","[꼬치]","[꼳이]","[꼬시]","[꽃이]"],
+["\"같이\"를 소리 나는 대로 쓰면 무엇일까요?","[가치]","[가티]","[갇이]","[가시]"],
+["\"국물\"을 소리 나는 대로 쓰면 무엇일까요?","[궁물]","[국물]","[구물]","[굼물]"],
+["꾸며 주는 말이 들어간 문장은 무엇일까요?","예쁜 꽃이 피었다.","꽃이 피었다.","꽃을 보았다.","꽃이다."]];
+function defaults(){return {v:2,
+  cfg:{name:"해나",city:"서울",note:"오늘도 네가 제일 반짝여. 사랑해!",unlockEvery:15,
+    hw:[{id:uid(),e:"🔢",t:"수학 연산 문제집 2쪽",n:3},{id:uid(),e:"📗",t:"영어 원서 읽기",n:5},{id:uid(),e:"✍️",t:"받아쓰기 연습",n:1},{id:uid(),e:"📓",t:"일기 쓰기",n:2},{id:uid(),e:"📝",t:"독서록 쓰기",n:1}],
+    tasks:{
+      morning:[T("🛏️","이불 정리하기"),T("🪥","세수하고 양치하기"),T("👕","옷 갈아입기"),T("🍚","아침밥 먹기"),T("🎒","가방 챙겨서 나가기")],
+      after:[T("🧼","손 씻기"),T("📒","알림장이랑 물통 꺼내기"),T("✏️","숙제하기"),T("📖","책 20분 읽기")],
+      night:[T("🚿","씻고 양치하기"),T("🧸","내 방 정리하기"),T("👗","내일 입을 옷 골라 두기"),T("🌙","9시 반까지 눕기")]},
+    rewards:[{id:uid(),e:"🍪",t:"간식 하나 고르기",c:15},{id:uid(),e:"📺",t:"영상 30분 보기",c:25},{id:uid(),e:"🎲",t:"보드게임 한 판 같이 하기",c:30},
+      {id:uid(),e:"🍕",t:"주말 저녁 메뉴 정하기",c:45},{id:uid(),e:"🎡",t:"아빠랑 둘이 나들이",c:90}]},
+  days:{},weeks:{},banked:0,bonus:0,spent:0,red:[]};}
+
+function normalize(s){
+  var d=defaults(); if(!s||typeof s!=="object") return d;
+  var c=s.cfg&&typeof s.cfg==="object"?s.cfg:{};
+  d.cfg.name=typeof c.name==="string"&&c.name&&c.name!=="우리 딸"?c.name:d.cfg.name;
+  if(Array.isArray(c.hw)) d.cfg.hw=c.hw.filter(function(t){return t&&t.id}).map(function(t){return {id:String(t.id),e:String(t.e||"📘"),t:String(t.t||""),n:Math.min(7,Math.max(1,Math.round(+t.n)||1))}});
+  if(s.weeks&&typeof s.weeks==="object") Object.keys(s.weeks).forEach(function(k){
+    var x=s.weeks[k]; if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||!x) return;
+    d.weeks[k]={c:x.c&&typeof x.c==="object"?x.c:{},stars:+x.stars||0,full:!!x.full};
+  });
+  d.cfg.note=typeof c.note==="string"?c.note:d.cfg.note;
+  d.cfg.city=typeof c.city==="string"&&c.city?c.city:"서울";
+  d.cfg.unlockEvery=[10,15,20,30].indexOf(c.unlockEvery)>=0?c.unlockEvery:15;
+  if(c.tasks&&typeof c.tasks==="object") ROUTINES.forEach(function(r){
+    if(Array.isArray(c.tasks[r.k])) d.cfg.tasks[r.k]=c.tasks[r.k].filter(function(t){return t&&t.id}).map(function(t){return {id:String(t.id),e:String(t.e||"⭐"),t:String(t.t||"")}});
+  });
+  if(Array.isArray(c.rewards)) d.cfg.rewards=c.rewards.filter(function(t){return t&&t.id}).map(function(t){return {id:String(t.id),e:String(t.e||"🎁"),t:String(t.t||""),c:Math.max(1,Math.round(+t.c)||1)}});
+  if(s.days&&typeof s.days==="object") Object.keys(s.days).forEach(function(k){
+    var x=s.days[k]; if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||!x) return;
+    var q={}; if(x.q&&typeof x.q==="object") SUBJ.forEach(function(sb){ if(x.q[sb.k]!=null) q[sb.k]=+x.q[sb.k]||0 });
+    d.days[k]={done:x.done&&typeof x.done==="object"?x.done:{},stars:+x.stars||0,r:Array.isArray(x.r)?x.r.map(Boolean):[false,false,false],q:q};
+  });
+  d.banked=+s.banked||0; d.bonus=+s.bonus||0; d.spent=+s.spent||0;
+  if(Array.isArray(s.red)) d.red=s.red.filter(function(x){return x&&x.id}).map(function(x){return {id:String(x.id),t:String(x.t||""),e:String(x.e||"🎁"),c:+x.c||0,d:String(x.d||""),st:x.st==="done"?"done":"wait"}});
+  return d;
+}
+
+/* ---------- state ---------- */
+var LS="star-day-v1", state=defaults(), sel=null, lastPhase=null, confirmId=null, newFriend=-1;
+try{var raw=localStorage.getItem(LS); if(raw) state=normalize(JSON.parse(raw));}catch(e){}
+
+function pad(n){return n<10?"0"+n:""+n}
+function keyOf(dt){return dt.getFullYear()+"-"+pad(dt.getMonth()+1)+"-"+pad(dt.getDate())}
+function today(){return keyOf(new Date())}
+function phase(){var h=new Date().getHours(); return h>=4&&h<12?"morning":h>=12&&h<19?"after":"night"}
+function dayRec(k){return state.days[k]||{done:{},stars:0,r:[false,false,false],q:{}}}
+function ensureDay(k){ if(!state.days[k]) state.days[k]={done:{},stars:0,r:[false,false,false],q:{}}; return state.days[k] }
+function weekKey(){var n=new Date(),m=new Date(n); m.setDate(n.getDate()-((n.getDay()+6)%7)); return keyOf(m)}
+function weekRec(k){return state.weeks[k]||{c:{},stars:0,full:false}}
+function hwCount(w,x){return Math.min(x.n,+w.c[x.id]||0)}
+function recomputeWeek(k){
+  var w=state.weeks[k]; if(!w) return; var s=0,full=state.cfg.hw.length>0;
+  state.cfg.hw.forEach(function(x){var n=hwCount(w,x); s+=n; if(n<x.n) full=false});
+  if(full) s+=5; w.stars=s; w.full=full;
+}
+function recompute(k){
+  var d=state.days[k]; if(!d) return; var s=0,r=[];
+  ROUTINES.forEach(function(ro){var ts=state.cfg.tasks[ro.k],n=ts.filter(function(t){return d.done[t.id]}).length;
+    s+=n; var full=ts.length>0&&n===ts.length; if(full) s+=2; r.push(full);});
+  if(r[0]&&r[1]&&r[2]) s+=3;
+  if(d.q) Object.keys(d.q).forEach(function(q){s+=+d.q[q]||0});
+  d.stars=s; d.r=r;
+}
+function earned(){var s=state.banked+state.bonus; Object.keys(state.days).forEach(function(k){s+=state.days[k].stars||0});
+  Object.keys(state.weeks).forEach(function(k){s+=state.weeks[k].stars||0}); return s}
+function balance(){return Math.max(0,earned()-state.spent)}
+function friendCount(){return Math.min(FRIENDS.length,Math.floor(earned()/state.cfg.unlockEvery)+1)}
+function streak(){
+  var d=new Date(),n=0; function ok(k){var x=state.days[k]; return x&&x.r&&(x.r[0]||x.r[1]||x.r[2])}
+  if(!ok(keyOf(d))) d.setDate(d.getDate()-1);
+  while(ok(keyOf(d))){n++; d.setDate(d.getDate()-1)} return n;
+}
+function prune(){
+  var ks=Object.keys(state.days).sort(); while(ks.length>120){var k=ks.shift(); state.banked+=state.days[k].stars||0; delete state.days[k]}
+  var ws=Object.keys(state.weeks).sort(); while(ws.length>26){var w=ws.shift(); state.banked+=state.weeks[w].stars||0; delete state.weeks[w]}
+}
+
+/* ---------- storage: shared db when available, this browser otherwise ---------- */
+var docRef=null, writing=false, dirty=false, syncEl=document.getElementById("sync");
+function setSync(t){syncEl.textContent=t}
+function save(){
+  try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}
+  if(!docRef) return; dirty=true; pump();
+}
+function pump(){
+  if(writing) return; writing=true;
+  (function loop(retried){
+    if(!dirty){writing=false; return}
+    dirty=false;
+    docRef.set(JSON.parse(JSON.stringify(state))).then(function(){setSync("다른 기기에서도 같은 기록이 보여요"); loop(false)},function(err){
+      if(err&&err.code==="unavailable"&&!retried){dirty=true; setTimeout(function(){loop(true)},600+Math.random()*600)}
+      else{writing=false; setSync("지금은 저장하지 못했어요. 이 기기에는 남아 있어요.")}
+    });
+  })(false);
+}
+var CITIES={"서울":[37.5665,126.978],"인천":[37.4563,126.7052],"수원":[37.2636,127.0286],"성남":[37.42,127.1267],"고양":[37.6584,126.832],"용인":[37.2411,127.1776],
+  "세종":[36.48,127.289],"대전":[36.3504,127.3845],"대구":[35.8714,128.6014],"광주":[35.1595,126.8526],"울산":[35.5384,129.3114],"부산":[35.1796,129.0756],"제주":[33.4996,126.5312]};
+function wmo(c){return c===0?"clear":c<=2?"partly":c===3?"cloudy":c===45||c===48?"fog":c>=95?"thunder":(c>=71&&c<=77)||c===85||c===86?"snow":c>=51?"rain":"cloudy"}
+var wxBusy=false;
+function fetchWeather(force){
+  var city=CITIES[state.cfg.city]?state.cfg.city:"서울",ll=CITIES[city];
+  if(wxBusy) return;
+  if(!force&&weather&&weather.loc===city&&weather.at&&Date.now()-new Date(weather.at).getTime()<30*60*1000) return;
+  wxBusy=true;
+  fetch("https://api.open-meteo.com/v1/forecast?latitude="+ll[0]+"&longitude="+ll[1]+
+    "&current=temperature_2m,weather_code&hourly=temperature_2m,precipitation_probability&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul&forecast_days=3")
+  .then(function(r){ if(!r.ok) throw new Error("http "+r.status); return r.json() })
+  .then(function(j){
+    var days=j.daily.time.map(function(d,i){
+      var am=null,rainAm=0; j.hourly.time.forEach(function(t,k){ if(t===d+"T08:00") am=j.hourly.temperature_2m[k];
+        if(t>=d+"T07:00"&&t<=d+"T09:00") rainAm=Math.max(rainAm,+j.hourly.precipitation_probability[k]||0) });
+      return {d:d,hi:j.daily.temperature_2m_max[i],lo:j.daily.temperature_2m_min[i],am:am,rain:+j.daily.precipitation_probability_max[i]||0,rainAm:rainAm};
+    });
+    weather={loc:city,at:new Date().toISOString(),now:{t:j.current.temperature_2m,cond:wmo(j.current.weather_code)},days:days};
+    try{localStorage.setItem(LS+"-wx",JSON.stringify(weather))}catch(e){}
+    renderWeather();
+  }).catch(function(){}).then(function(){wxBusy=false});
+}
+function connect(){
+  setSync("기록은 이 기기에 저장돼요. 부모님 메뉴에서 백업할 수 있어요.");
+  fetchWeather(); setInterval(function(){fetchWeather()},10*60*1000);
+  document.addEventListener("visibilitychange",function(){ if(!document.hidden) fetchWeather() });
+}
+
+/* ---------- dom helper ---------- */
+function h(tag,props){
+  var el=document.createElement(tag),i,k;
+  if(props) for(k in props){ if(k==="text") el.textContent=props[k]; else if(k.slice(0,2)==="on") el.addEventListener(k.slice(2),props[k]); else if(props[k]===true) el.setAttribute(k,""); else if(props[k]!==false&&props[k]!=null) el.setAttribute(k,props[k]); }
+  for(i=2;i<arguments.length;i++){var c=arguments[i]; if(c==null) continue; el.appendChild(typeof c==="string"?document.createTextNode(c):c)}
+  return el;
+}
+function $(id){return document.getElementById(id)}
+function fill(el,kids){el.textContent=""; kids.forEach(function(k){if(k) el.appendChild(k)})}
+
+/* ---------- effects ---------- */
+var toastT=null;
+function toast(msg){var t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove("show")},2600)}
+var actx=null;
+function chime(big){
+  try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); var t0=actx.currentTime;
+    (big?[523,659,784,1047]:[784,1047]).forEach(function(f,i){var o=actx.createOscillator(),g=actx.createGain(); o.type="sine"; o.frequency.value=f;
+      g.gain.setValueAtTime(0.0001,t0+i*0.09); g.gain.exponentialRampToValueAtTime(0.18,t0+i*0.09+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t0+i*0.09+0.3);
+      o.connect(g); g.connect(actx.destination); o.start(t0+i*0.09); o.stop(t0+i*0.09+0.32)});
+  }catch(e){}
+}
+var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function confetti(n){
+  if(reduce) return; var cv=$("fx"),cx=cv.getContext("2d"),W=cv.width=innerWidth,H=cv.height=innerHeight,ps=[],cols=["#FFC22E","#FF7A59","#6FE0A8","#B59BFF","#5EC1FF"],i;
+  for(i=0;i<n;i++) ps.push({x:W/2+(Math.random()-.5)*W*.5,y:H*.35,vx:(Math.random()-.5)*9,vy:-Math.random()*9-3,s:5+Math.random()*7,c:cols[i%cols.length],r:Math.random()*6,l:90+Math.random()*40});
+  (function tick(){cx.clearRect(0,0,W,H); var alive=false;
+    ps.forEach(function(p){ if(p.l<=0) return; alive=true; p.vy+=0.28; p.x+=p.vx; p.y+=p.vy; p.r+=0.2; p.l--;
+      cx.save(); cx.translate(p.x,p.y); cx.rotate(p.r); cx.globalAlpha=Math.min(1,p.l/30); cx.fillStyle=p.c; cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); cx.restore()});
+    if(alive) requestAnimationFrame(tick); else cx.clearRect(0,0,W,H);
+  })();
+}
+
+/* ---------- actions ---------- */
+function cheerUp(fBefore,msg,big){
+  var fNow=friendCount();
+  if(fNow>fBefore){newFriend=fNow-1; msg="새 친구 "+FRIENDS[fNow-1][1]+"가 놀러 왔어요!"; big=true}
+  chime(!!msg); if(msg){toast(msg); confetti(big?140:70)}
+}
+function setHw(item,i){
+  var k=weekKey(); if(!state.weeks[k]) state.weeks[k]={c:{},stars:0,full:false};
+  var w=state.weeks[k],cur=hwCount(w,item),nx=cur>i?i:i+1,wasFull=w.full,fBefore=friendCount();
+  w.c[item.id]=nx; recomputeWeek(k); prune();
+  if(nx>cur) cheerUp(fBefore,w.full&&!wasFull?"이번 주 숙제를 전부 했어요! 별 5개 더":null,true);
+  save(); render();
+}
+
+/* ---------- quiz ---------- */
+var quiz=null;
+function shuffle(a){a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i]; a[i]=a[j]; a[j]=t} return a}
+function ri(a,b){return a+Math.floor(Math.random()*(b-a+1))}
+function numQ(q,ans,unit){
+  var set=[ans],ds=shuffle([1,-1,2,-2,10,-10,9,-9,11]),i=0; unit=unit||"";
+  while(set.length<4&&i<ds.length){var v=ans+ds[i++]; if(v>=0&&set.indexOf(v)<0) set.push(v)}
+  return {q:q,ch:shuffle(set).map(function(v){return v+unit}),ans:ans+unit};
+}
+function mathQ(type){
+  var a,b,c;
+  switch(type){
+    case 0: a=ri(15,78); b=ri(13,89); return numQ(a+" + "+b+" = ?",a+b);
+    case 1: a=ri(31,99); b=ri(12,a-5); return numQ(a+" − "+b+" = ?",a-b);
+    case 2: a=ri(2,9); b=ri(2,9); return numQ(a+" × "+b+" = ?",a*b);
+    case 3: b=ri(12,45); c=b+ri(11,48); return numQ("□ + "+b+" = "+c+" 일 때, □ 안에 들어갈 수는?",c-b);
+    case 4: a=ri(2,9); b=ri(3,8); return numQ("사탕이 한 봉지에 "+a+"개씩 들어 있어요. "+b+"봉지에는 모두 몇 개일까요?",a*b,"개");
+    case 5: a=ri(40,95); b=ri(15,38); return numQ("색종이 "+a+"장 중에서 "+b+"장을 썼어요. 남은 색종이는 몇 장일까요?",a-b,"장");
+    default: a=ri(1,4); c=ri(5,95); return numQ(a+" m "+c+" cm는 모두 몇 cm일까요?",a*100+c," cm");
+  }
+}
+function startQuiz(sub){
+  var qs;
+  if(sub==="ma") qs=shuffle([0,1,2,3,4,5,6]).slice(0,5).map(mathQ);
+  else qs=shuffle(sub==="en"?BANK_EN:BANK_KO).slice(0,5).map(function(it){return {q:it[0],ch:shuffle(it.slice(1)),ans:it[1]}});
+  quiz={sub:sub,qs:qs,i:0,picked:null,score:0,done:false,gained:0};
+  renderQuiz();
+}
+function pickAnswer(ch){
+  if(!quiz||quiz.picked!=null) return;
+  quiz.picked=ch; var ok=ch===quiz.qs[quiz.i].ans; if(ok){quiz.score++; chime(false)}
+  renderQuiz();
+}
+function nextQ(){
+  if(quiz.i<quiz.qs.length-1){quiz.i++; quiz.picked=null; renderQuiz(); return}
+  quiz.done=true;
+  var reward=quiz.score===5?3:quiz.score>=3?2:0,d=ensureDay(today()),prev=d.q[quiz.sub],fBefore=friendCount();
+  quiz.gained=Math.max(0,reward-(+prev||0));
+  if(prev==null||quiz.gained>0){ d.q[quiz.sub]=Math.max(reward,+prev||0); recompute(today()); prune(); save() }
+  if(quiz.gained>0) cheerUp(fBefore,"퀴즈 별 "+quiz.gained+"개를 받았어요!",quiz.score===5);
+  render();
+}
+function renderQuiz(){
+  var body=$("quizBody"),d=dayRec(today());
+  if(!quiz){
+    fill(body,[h("h2",{text:"오늘의 퀴즈"}),h("p",{"class":"sub",text:"과목을 골라 다섯 문제를 풀어 보세요."}),
+      h("div",{"class":"subs"},SUBJ.map(function(sb){
+        var got=d.q[sb.k];
+        return h("button",{type:"button","class":"sub-btn",onclick:function(){startQuiz(sb.k)}},
+          h("span",{"class":"e","aria-hidden":"true",text:sb.e}),h("span",{"class":"nm",text:sb.nm}),
+          h("span",{"class":"st",text:got>=3?"오늘 별 3개를 다 받았어요":got>0?"오늘 별 "+got+"개 받았어요":"별을 받을 수 있어요"}));
+      }).reduce(function(f,n){f.appendChild(n); return f},document.createDocumentFragment())),
+      h("p",{"class":"rule",text:"3개 이상 맞히면 별 2개 · 다 맞히면 별 3개 · 과목마다 하루에 별 3개까지 받아요. 연습은 몇 번이든 할 수 있어요."})]);
+    return;
+  }
+  var sb=SUBJ.filter(function(x){return x.k===quiz.sub})[0];
+  if(quiz.done){
+    fill(body,[h("div",{"class":"result"},h("h2",{text:sb.nm+" 퀴즈 끝!"}),h("div",{"class":"big",text:quiz.score+" / "+quiz.qs.length}),
+      h("p",{text:quiz.gained>0?"별 "+quiz.gained+"개를 받았어요.":quiz.score>=3?"오늘 받을 별은 이미 받았어요. 연습도 멋져요!":"괜찮아요. 한 번 더 풀어 볼까요?"}),
+      h("div",{"class":"row"},h("button",{type:"button","class":"btn",text:"한 번 더 풀기",onclick:function(){startQuiz(quiz.sub)}}),
+        h("button",{type:"button","class":"btn ghost",text:"다른 과목 고르기",onclick:function(){quiz=null; renderQuiz()}})))]);
+    return;
+  }
+  var q=quiz.qs[quiz.i],answered=quiz.picked!=null,ok=quiz.picked===q.ans;
+  fill(body,[h("div",{"class":"qhead"},h("span",{text:sb.nm+" · "+(quiz.i+1)+" / "+quiz.qs.length}),
+      h("button",{type:"button","class":"btn ghost",text:"그만하기",onclick:function(){quiz=null; renderQuiz()}})),
+    h("p",{"class":"qtext",lang:quiz.sub==="en"?"en":"ko",text:q.q}),
+    h("div",{"class":"opts"},q.ch.map(function(ch){
+      return h("button",{type:"button","class":"opt"+(answered&&ch===q.ans?" right":answered&&ch===quiz.picked?" wrong":""),disabled:answered,lang:quiz.sub==="en"?"en":"ko",text:ch,onclick:function(){pickAnswer(ch)}});
+    }).reduce(function(f,n){f.appendChild(n); return f},document.createDocumentFragment())),
+    h("div",{"class":"qfoot"},h("p",{"class":answered?(ok?"ok":"no"):"",text:!answered?"":ok?"정답이에요!":"아쉬워요. 정답은 초록색 칸이에요."}),
+      answered?h("button",{type:"button","class":"btn",id:"qNext",text:quiz.i<quiz.qs.length-1?"다음 문제":"결과 보기",onclick:nextQ}):null)]);
+  var nx=$("qNext"); if(nx) nx.focus();
+}
+
+function toggle(taskId){
+  var k=today(), d=ensureDay(k), before=d.r.slice(), fBefore=friendCount(), on=!d.done[taskId];
+  if(on) d.done[taskId]=true; else delete d.done[taskId];
+  recompute(k); prune();
+  var msg=null,big=false;
+  if(on){
+    ROUTINES.forEach(function(r,i){ if(d.r[i]&&!before[i]) msg=r.nm+" 끝! 별 2개 더 받았어요" });
+    if(d.r[0]&&d.r[1]&&d.r[2]&&!(before[0]&&before[1]&&before[2])){msg="오늘 할 일을 전부 해냈어요! 별 3개 더"; big=true}
+    cheerUp(fBefore,msg,big);
+  }
+  save(); render(on?taskId:null);
+}
+function redeem(rw){
+  if(balance()<rw.c) return;
+  if(confirmId!==rw.id){confirmId=rw.id; renderShop(); return}
+  confirmId=null; state.spent+=rw.c;
+  state.red.unshift({id:uid(),t:rw.t,e:rw.e,c:rw.c,d:today(),st:"wait"}); state.red=state.red.slice(0,30);
+  chime(true); confetti(90); toast("쿠폰이 생겼어요! 엄마 아빠에게 보여 주세요"); save(); render();
+}
+
+/* ---------- render ---------- */
+function render(popId){
+  var ph=phase(); document.documentElement.setAttribute("data-phase",ph);
+  if(ph!==lastPhase){sel=ph; lastPhase=ph}
+  var nm=state.cfg.name, now=new Date();
+  $("hi").textContent=ph==="morning"?"좋은 아침, "+nm+"!":ph==="after"?"잘 다녀왔어, "+nm+"?":"오늘도 수고했어, "+nm;
+  $("date").textContent=(now.getMonth()+1)+"월 "+now.getDate()+"일 "+DAYS_KO[now.getDay()]+"요일";
+  $("mStar").textContent=balance(); $("mStreak").textContent=streak();
+  $("noteBox").hidden=!state.cfg.note; $("note").textContent=state.cfg.note;
+
+  var d=dayRec(today());
+  fill($("tabs"),ROUTINES.map(function(r){
+    var ts=state.cfg.tasks[r.k],n=ts.filter(function(t){return d.done[t.id]}).length,full=ts.length>0&&n===ts.length;
+    return h("button",{type:"button",role:"tab","aria-selected":String(sel===r.k),"class":"tab"+(full?" full":""),onclick:function(){sel=r.k; render()}},
+      h("span",{"class":"nm"},r.nm, r.k===ph?h("span",{"class":"now",text:"지금"}):null),
+      h("span",{"class":"ct",text:full?"다 했어요":n+" / "+ts.length}));
+  }));
+  var ts=state.cfg.tasks[sel],done=ts.filter(function(t){return d.done[t.id]}).length;
+  $("barFill").style.width=(ts.length?Math.round(done/ts.length*100):0)+"%";
+  fill($("tasks"),ts.length?ts.map(function(t){
+    var on=!!d.done[t.id];
+    return h("li",null,h("button",{type:"button","class":"task"+(popId===t.id?" pop":""),"aria-pressed":String(on),onclick:function(){toggle(t.id)}},
+      h("span",{"class":"em","aria-hidden":"true",text:t.e}),h("span",{"class":"tx",text:t.t}),h("span",{"class":"ck","aria-hidden":"true",text:"★"})));
+  }):[h("li",null,h("p",{"class":"empty",text:"아직 할 일이 없어요. 부모님 메뉴에서 넣어 주세요."}))]);
+  var cheer=$("cheer"); cheer.hidden=!(ts.length&&done===ts.length); cheer.textContent="전부 해냈어요! 정말 멋져요.";
+
+  renderWeather(); renderWeek(); renderFriends(); renderShop(); renderNav(); renderHw(); renderQuiz();
+}
+var weather=null;
+try{var wraw=localStorage.getItem(LS+"-wx"); if(wraw) weather=JSON.parse(wraw)}catch(e){}
+var COND={clear:["☀️","맑음"],partly:["⛅","구름 조금"],cloudy:["☁️","흐림"],rain:["🌧️","비"],snow:["❄️","눈"],fog:["🌫️","안개"],thunder:["⛈️","천둥 번개"]};
+function wearFor(lo,hi){
+  var w=lo<=-5?"두꺼운 패딩에 목도리, 장갑, 모자":lo<=0?"패딩에 목도리와 장갑":lo<=5?"두꺼운 겨울 외투와 따뜻한 안옷":lo<=9?"코트나 도톰한 점퍼":
+    lo<=14?"자켓이나 가디건에 긴바지":lo<=19?"긴팔에 얇은 겉옷":lo<=24?"반팔에 얇은 겉옷":"반팔과 반바지";
+  if(hi-lo>=8&&lo<=14) w+=". 낮에는 따뜻해지니 벗기 쉬운 겉옷이 좋아요";
+  return w;
+}
+function deg(n){return Math.round(n)+"°"}
+function am(d){return d.am!=null&&isFinite(d.am)?d.am:d.lo}
+function renderWeather(){
+  var card=$("wxCard"),w=weather,days=w&&Array.isArray(w.days)?w.days:[],tk=today(),tm=new Date(); tm.setDate(tm.getDate()+1); var mk=keyOf(tm);
+  function find(k){for(var i=0;i<days.length;i++) if(days[i]&&days[i].d===k&&isFinite(days[i].lo)&&isFinite(days[i].hi)) return days[i]; return null}
+  var t=find(tk),m=find(mk);
+  if(w&&CITIES[state.cfg.city]&&w.loc!==state.cfg.city){card.hidden=true; return}
+  if(!t&&!m){card.hidden=true; return}
+  card.hidden=false;
+  var at=w.at?new Date(w.at):null,fresh=at&&!isNaN(at)&&Date.now()-at.getTime()<3*3600*1000&&w.now&&isFinite(w.now.t),tiles=[];
+  $("wxAt").textContent=String(w.loc||"")+(at&&!isNaN(at)?" · "+(at.getMonth()+1)+"월 "+at.getDate()+"일 "+(at.getHours()<12?"오전 ":"오후 ")+((at.getHours()+11)%12+1)+"시 기준":"");
+  if(fresh){var c=COND[w.now.cond]||null,night=phase()==="night";
+    tiles.push(h("div",null,h("span",{"class":"lb",text:"지금"}),h("span",{"class":"big",text:(c?(night&&w.now.cond==="clear"?"🌙":c[0])+" ":"")+deg(w.now.t)}),h("span",{"class":"sm",text:c?c[1]:""})))}
+  function tile(lb,d){return h("div",null,h("span",{"class":"lb",text:lb}),h("span",{"class":"big",text:deg(am(d))+" / "+deg(d.hi)}),
+    h("span",{"class":"sm",text:"아침 8시 / 낮 최고"+(d.rain>=30?" · 비 올 확률 "+Math.round(d.rain)+"%":"")}))}
+  if(t) tiles.push(tile("오늘",t));
+  if(m) tiles.push(tile("내일",m));
+  fill($("wx"),tiles);
+  var useToday=phase()==="morning"&&t, d=useToday?t:(m||t), wear=$("wear");
+  fill(wear,[h("b",{text:(d===t?"오늘":"내일 아침")+" 옷 "}),wearFor(am(d),d.hi)+((d.rainAm!=null?d.rainAm:d.rain)>=50?". 우산도 챙겨요":"")+"."]);
+}
+var view="today";
+function renderNav(){
+  var w=weekRec(weekKey()),tot=0,dn=0; state.cfg.hw.forEach(function(x){tot+=x.n; dn+=hwCount(w,x)});
+  fill($("nav"),[["today","오늘 할 일",""],["hw","숙제",tot?dn+" / "+tot:""],["quiz","퀴즈",""]].map(function(v){
+    return h("button",{type:"button","aria-current":view===v[0]?"page":null,onclick:function(){view=v[0]; if(v[0]!=="quiz"&&quiz&&quiz.done) quiz=null; render()}},v[1],v[2]?h("small",{text:v[2]}):null);
+  }));
+  $("viewToday").hidden=view!=="today"; $("viewHw").hidden=view!=="hw"; $("viewQuiz").hidden=view!=="quiz";
+}
+function renderHw(){
+  var w=weekRec(weekKey()),tot=0,dn=0; state.cfg.hw.forEach(function(x){tot+=x.n; dn+=hwCount(w,x)});
+  $("hwSub").textContent=!tot?"":w.full?"이번 주 숙제를 전부 했어요. 정말 대단해요!":"동그라미 "+tot+"개 중에 "+dn+"개를 채웠어요. 하나 할 때마다 눌러 주세요.";
+  $("hwFill").style.width=(tot?Math.round(dn/tot*100):0)+"%";
+  fill($("hwList"),state.cfg.hw.length?state.cfg.hw.map(function(x){
+    var n=hwCount(w,x),bubs=h("div",{"class":"bubs"}),i;
+    for(i=0;i<x.n;i++) (function(i){bubs.appendChild(h("button",{type:"button","class":"bub","aria-pressed":String(i<n),"aria-label":x.t+" "+(i+1)+"번째",text:"★",onclick:function(){setHw(x,i)}}))})(i);
+    return h("li",{"class":n>=x.n?"full":""},h("span",{"class":"em","aria-hidden":"true",text:x.e}),
+      h("span",{"class":"tx"},x.t,h("small",{text:x.n>1?"일주일에 "+x.n+"번 · "+n+"번 했어요":n?"다 했어요":"일주일에 한 번"})),bubs);
+  }):[h("li",null,h("p",{"class":"empty",text:"아직 숙제가 없어요. 부모님 메뉴에서 넣어 주세요."}))]);
+}
+function renderWeek(){
+  var now=new Date(),mon=new Date(now); mon.setDate(now.getDate()-((now.getDay()+6)%7)); var out=[],i;
+  for(i=0;i<7;i++){var dt=new Date(mon); dt.setDate(mon.getDate()+i); var k=keyOf(dt),r=dayRec(k).r;
+    out.push(h("div",{"class":"day"+(k===today()?" today":"")},h("b",{text:DAYS_KO[dt.getDay()]}),
+      h("div",{"class":"dots","aria-label":ROUTINES.map(function(ro,j){return ro.nm+(r[j]?" 완료":" 아직")}).join(", ")},
+        h("i",{"class":r[0]?"on":""}),h("i",{"class":r[1]?"on":""}),h("i",{"class":r[2]?"on":""}))));}
+  fill($("week"),out);
+}
+function renderFriends(){
+  var n=friendCount(),ev=state.cfg.unlockEvery,e=earned(),into=e%ev;
+  $("frSub").textContent=n>=FRIENDS.length?"친구를 모두 만났어요!":"별 "+(ev-into)+"개만 더 모으면 새 친구를 만나요";
+  $("frFill").style.width=(n>=FRIENDS.length?100:Math.round(into/ev*100))+"%";
+  fill($("friends"),FRIENDS.map(function(f,i){
+    return i<n?h("div",{"class":"fr"+(i===newFriend?" new":"")},h("div",null,h("div",{"class":"e",text:f[0]}),h("div",{"class":"n",text:f[1]})))
+              :h("div",{"class":"fr lock","aria-label":"아직 못 만난 친구"},h("div",{"class":"e",text:"?"}));
+  }));
+  newFriend=-1;
+}
+function renderShop(){
+  var b=balance();
+  fill($("shop"),state.cfg.rewards.length?state.cfg.rewards.map(function(rw){
+    var can=b>=rw.c;
+    return h("li",{"class":"rw"},h("span",{"class":"em","aria-hidden":"true",text:rw.e}),
+      h("span",{"class":"tx"},rw.t,h("small",{text:"별 "+rw.c+"개"})),
+      h("button",{type:"button","class":"btn",disabled:!can,onclick:function(){redeem(rw)},text:!can?(rw.c-b)+"개 더":confirmId===rw.id?"정말 바꿀래요":"바꾸기"}));
+  }):[h("li",null,h("p",{"class":"empty",text:"부모님 메뉴에서 선물을 넣어 주세요."}))]);
+  fill($("coupons"),state.red.filter(function(x){return x.st==="wait"}).map(function(x){
+    return h("li",{text:x.e+" "+x.t+" 쿠폰 · 엄마 아빠에게 보여 주세요"})}));
+}
+
+/* ---------- parent menu ---------- */
+var gateA=0;
+$("openParent").addEventListener("click",function(){
+  var a=3+Math.floor(Math.random()*7),b=6+Math.floor(Math.random()*4); gateA=a*b;
+  $("gateQ").textContent=a+" × "+b+" 는 얼마일까요?"; $("gateAns").value=""; $("gate").showModal(); $("gateAns").focus();
+});
+$("gateClose").addEventListener("click",function(){$("gate").close()});
+$("gateForm").addEventListener("submit",function(ev){
+  ev.preventDefault();
+  if(+$("gateAns").value===gateA){$("gate").close(); renderParent(); $("parent").showModal()}
+  else{$("gateAns").value=""; $("gateQ").textContent="다시 풀어 볼까요? "+$("gateQ").textContent.replace(/^다시 풀어 볼까요\? /,"")}
+});
+function commit(){save(); render()}
+function field(label,id,value,cls,onchange,type){
+  return h("div",{"class":"row"},h("label",{"for":id,text:label}),h("input",{id:id,"class":"in "+cls,value:value,type:type||"text",onchange:function(){onchange(this.value)}}));
+}
+var armed=null;
+function twoStep(key,label,sure,fn,cls){
+  return h("button",{type:"button","class":"btn "+(armed===key?"warn":(cls||"ghost")),text:armed===key?sure:label,onclick:function(){ if(armed===key){armed=null; fn()} else {armed=key} renderParent()}});
+}
+function renderParent(){
+  var body=$("parentBody"),kids=[];
+  kids.push(h("header",null,h("h2",{text:"부모님 메뉴"}),h("button",{"class":"x",type:"button","aria-label":"닫기",text:"✕",onclick:function(){armed=null; $("parent").close()}})));
+
+  var wait=state.red.filter(function(x){return x.st==="wait"});
+  kids.push(h("section",null,h("h3",{text:"아이가 바꾼 쿠폰"}),
+    wait.length?h("div",null,wait.map(function(x){return h("div",{"class":"row"},
+      h("span",{"class":"in t",text:x.e+" "+x.t+" (별 "+x.c+"개, "+x.d.slice(5).replace("-","/")+")"}),
+      h("button",{type:"button","class":"btn",text:"줬어요",onclick:function(){x.st="done"; commit(); renderParent()}}),
+      h("button",{type:"button","class":"btn ghost",text:"별 돌려주기",onclick:function(){state.spent=Math.max(0,state.spent-x.c); state.red=state.red.filter(function(y){return y!==x}); commit(); renderParent()}}))
+    }).reduce(function(f,n){f.appendChild(n); return f},document.createDocumentFragment())):h("p",{"class":"hint",text:"기다리는 쿠폰이 없어요."})));
+
+  kids.push(h("section",null,h("h3",{text:"칭찬 별 주기"}),h("p",{"class":"hint",text:"지금 쓸 수 있는 별 "+balance()+"개 · 지금까지 모은 별 "+earned()+"개"}),
+    h("div",{"class":"row"},[1,3,5].map(function(n){return h("button",{type:"button","class":"btn",text:"별 "+n+"개 주기",onclick:function(){state.bonus+=n; commit(); renderParent(); toast("칭찬 별 "+n+"개를 줬어요")}})})
+      .reduce(function(f,n){f.appendChild(n); return f},document.createDocumentFragment()))));
+
+  kids.push(h("section",null,h("h3",{text:"기본 설정"}),
+    field("아이 이름 (인사말에 나와요)","pName",state.cfg.name,"t",function(v){state.cfg.name=v.trim()||"해나"; commit()}),
+    field("오늘의 한마디 (비우면 숨겨져요)","pNote",state.cfg.note,"t",function(v){state.cfg.note=v.trim(); commit()}),
+    h("div",{"class":"row"},h("label",{"for":"pCity",text:"날씨를 볼 지역"}),
+      (function(){var s=h("select",{id:"pCity","class":"in",onchange:function(){state.cfg.city=this.value; commit(); fetchWeather(true)}});
+        Object.keys(CITIES).forEach(function(n){var o=h("option",{value:n,text:n}); if(n===state.cfg.city) o.selected=true; s.appendChild(o)}); return s})()),
+    h("div",{"class":"row"},h("label",{"for":"pEvery",text:"새 친구를 만나는 데 필요한 별"}),
+      (function(){var s=h("select",{id:"pEvery","class":"in",onchange:function(){state.cfg.unlockEvery=+this.value; commit()}});
+        [10,15,20,30].forEach(function(n){var o=h("option",{value:n,text:n+"개"}); if(n===state.cfg.unlockEvery) o.selected=true; s.appendChild(o)}); return s})())));
+
+  ROUTINES.forEach(function(r){
+    var list=state.cfg.tasks[r.k],sec=h("section",null,h("h3",{text:r.nm+" 할 일"}));
+    list.forEach(function(t,i){
+      sec.appendChild(h("div",{"class":"row"},
+        h("input",{"class":"in e",value:t.e,"aria-label":"그림",id:"te-"+t.id,onchange:function(){t.e=this.value.trim()||"⭐"; commit()}}),
+        h("input",{"class":"in t",value:t.t,"aria-label":"할 일",id:"tt-"+t.id,onchange:function(){t.t=this.value.trim(); commit()}}),
+        h("button",{type:"button","class":"x","aria-label":"위로",text:"↑",disabled:i===0,onclick:function(){list.splice(i-1,0,list.splice(i,1)[0]); commit(); renderParent()}}),
+        h("button",{type:"button","class":"x","aria-label":"지우기",text:"✕",onclick:function(){list.splice(i,1); recompute(today()); commit(); renderParent()}})));
+    });
+    sec.appendChild(h("button",{type:"button","class":"btn ghost",text:"할 일 더하기",onclick:function(){var t=T("⭐","새 할 일"); list.push(t); recompute(today()); commit(); renderParent(); var el=$("tt-"+t.id); if(el){el.focus(); el.select()}}}));
+    kids.push(sec);
+  });
+
+  var hs=h("section",null,h("h3",{text:"이번 주 숙제"}),h("p",{"class":"hint",text:"숫자는 일주일에 해야 하는 횟수예요 (1~7). 매주 월요일에 체크가 새로 시작돼요."}));
+  state.cfg.hw.forEach(function(x,i){
+    hs.appendChild(h("div",{"class":"row"},
+      h("input",{"class":"in e",value:x.e,"aria-label":"그림",id:"he-"+x.id,onchange:function(){x.e=this.value.trim()||"📘"; commit()}}),
+      h("input",{"class":"in t",value:x.t,"aria-label":"숙제 이름",id:"ht-"+x.id,onchange:function(){x.t=this.value.trim(); commit()}}),
+      h("input",{"class":"in c",value:x.n,type:"number",min:1,max:7,"aria-label":"일주일 횟수",id:"hn-"+x.id,onchange:function(){x.n=Math.min(7,Math.max(1,Math.round(+this.value)||1)); this.value=x.n; recomputeWeek(weekKey()); commit()}}),
+      h("button",{type:"button","class":"x","aria-label":"지우기",text:"✕",onclick:function(){state.cfg.hw.splice(i,1); recomputeWeek(weekKey()); commit(); renderParent()}})));
+  });
+  hs.appendChild(h("button",{type:"button","class":"btn ghost",text:"숙제 더하기",onclick:function(){var x={id:uid(),e:"📘",t:"새 숙제",n:1}; state.cfg.hw.push(x); recomputeWeek(weekKey()); commit(); renderParent(); var el=$("ht-"+x.id); if(el){el.focus(); el.select()}}}));
+  kids.push(hs);
+
+  var rs=h("section",null,h("h3",{text:"별 가게 선물"}));
+  state.cfg.rewards.forEach(function(rw,i){
+    rs.appendChild(h("div",{"class":"row"},
+      h("input",{"class":"in e",value:rw.e,"aria-label":"그림",id:"re-"+rw.id,onchange:function(){rw.e=this.value.trim()||"🎁"; commit()}}),
+      h("input",{"class":"in t",value:rw.t,"aria-label":"선물 이름",id:"rt-"+rw.id,onchange:function(){rw.t=this.value.trim(); commit()}}),
+      h("input",{"class":"in c",value:rw.c,type:"number",min:1,"aria-label":"필요한 별",id:"rc-"+rw.id,onchange:function(){rw.c=Math.max(1,Math.round(+this.value)||1); this.value=rw.c; commit()}}),
+      h("button",{type:"button","class":"x","aria-label":"지우기",text:"✕",onclick:function(){state.cfg.rewards.splice(i,1); commit(); renderParent()}})));
+  });
+  rs.appendChild(h("button",{type:"button","class":"btn ghost",text:"선물 더하기",onclick:function(){var rw={id:uid(),e:"🎁",t:"새 선물",c:20}; state.cfg.rewards.push(rw); commit(); renderParent(); var el=$("rt-"+rw.id); if(el){el.focus(); el.select()}}}));
+  kids.push(rs);
+
+  kids.push(h("section",null,h("h3",{text:"기록 지우기"}),h("p",{"class":"hint",text:"지운 기록은 되돌릴 수 없어요. 할 일과 선물 목록은 그대로 남아요."}),
+    h("div",{"class":"row"},
+      twoStep("day","오늘 체크만 지우기","정말 오늘 체크를 지울까요",function(){delete state.days[today()]; commit()}),
+      twoStep("all","별과 기록 모두 지우기","정말 모두 지울까요",function(){state.days={}; state.weeks={}; state.banked=0; state.bonus=0; state.spent=0; state.red=[]; commit()}))));
+  var box=h("textarea",{id:"pBackup","class":"in t",rows:4,"aria-label":"백업 내용",style:"width:100%;font-size:13px"}),msg=h("p",{"class":"hint",text:""});
+  kids.push(h("section",null,h("h3",{text:"백업과 불러오기"}),h("p",{"class":"hint",text:"기록은 이 기기의 브라우저에만 있어요. 가끔 백업 내용을 복사해 메모에 붙여 두면, 기기를 바꾸거나 기록이 지워졌을 때 되살릴 수 있어요."}),
+    box,h("div",{"class":"row",style:"margin-top:8px"},
+      h("button",{type:"button","class":"btn",text:"백업 내용 만들어 복사하기",onclick:function(){box.value=JSON.stringify(state); box.select();
+        try{navigator.clipboard.writeText(box.value).then(function(){msg.textContent="복사했어요. 메모 앱에 붙여 넣어 두세요."},function(){msg.textContent="칸 안의 글자를 직접 복사해 주세요."})}catch(e){msg.textContent="칸 안의 글자를 직접 복사해 주세요."}}}),
+      h("button",{type:"button","class":"btn ghost",text:"붙여 넣은 백업 불러오기",onclick:function(){
+        var j; try{j=JSON.parse(box.value)}catch(e){msg.textContent="백업 내용이 올바르지 않아요. 복사한 글자를 처음부터 끝까지 붙여 넣어 주세요."; return}
+        if(!j||typeof j!=="object"||!j.cfg){msg.textContent="백업 내용이 올바르지 않아요."; return}
+        state=normalize(j); commit(); fetchWeather(true); renderParent(); toast("백업을 불러왔어요")}})),msg));
+  fill(body,kids);
+}
+
+/* ---------- boot ---------- */
+render();
+connect();
+setInterval(function(){ if(phase()!==lastPhase||$("date").dataset.k!==today()){ $("date").dataset.k=today(); render() } },60000);
+$("date").dataset.k=today();
+document.addEventListener("visibilitychange",function(){ if(!document.hidden) render() });
+})();
+</script>
+</body>
+</html>
